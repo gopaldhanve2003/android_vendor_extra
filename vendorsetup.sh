@@ -12,18 +12,16 @@ enable_ccache() {
 
 enable_gms() {
     local enable_gms_flag=${1:-true}
-    if [[ "${enable_gms_flag}" == "true" && -f vendor/partner_gms/Android.mk ]]; then
+    if [[ "${enable_gms_flag}" == "true" && -f vendor/pixel/gms/Android.mk ]]; then
         export WITH_GMS=true
-        export GMS_MAKEFILE=gms.mk
         export BUILD_VANILLA=false
         export TARGET_UNOFFICIAL_BUILD_ID="gms"
-        echo -e "\e[32m[INFO]\e[0m partner_gms found. Enabling GMS build."
+        echo -e "\e[32m[INFO]\e[0m gms found. Enabling GMS build."
     else
         export WITH_GMS=false
-        export GMS_MAKEFILE=
         export BUILD_VANILLA=true
         unset TARGET_UNOFFICIAL_BUILD_ID
-        echo -e "\e[33m[WARN]\e[0m partner_gms not found or disabling GMS. Proceeding with vanilla build."
+        echo -e "\e[33m[WARN]\e[0m gms not found or disabling GMS. Proceeding with vanilla build."
     fi
 }
 

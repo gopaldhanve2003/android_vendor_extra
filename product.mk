@@ -1,12 +1,11 @@
 ifneq ($(BUILD_VANILLA), true)
-# Gsans
-$(call inherit-product, vendor/google_sans/product.mk)
 
-# Pixel clocks
-$(call inherit-product, vendor/pixel_clocks/product.mk)
+# Pixel
+$(call inherit-product, vendor/pixel/clocks/products/clocks.mk)
+$(call inherit-product, vendor/pixel/gms/products/gms.mk)
+$(call inherit-product, vendor/pixel/gsans/products/gsans.mk)
+$(call inherit-product, vendor/pixel/launcher/products/launcher.mk)
 
-# Pixel launcher
-$(call inherit-product, vendor/pixel_launcher/product.mk)
 endif
 
 # Face Unlock

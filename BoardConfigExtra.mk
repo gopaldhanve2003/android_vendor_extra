@@ -1,12 +1,11 @@
 ifneq ($(BUILD_VANILLA), true)
-# Gsans
-include vendor/google_sans/board.mk
 
-# Pixel clocks
-include vendor/pixel_clocks/board.mk
+# Pixel
+include vendor/pixel/clocks/products/board.mk
+include vendor/pixel/gms/products/board.mk
+include vendor/pixel/gsans/products/board.mk
+include vendor/pixel/launcher/products/board.mk
 
-# Pixel Launcher
-include vendor/pixel_launcher/board.mk
 endif
 
 # MiuiCamera
