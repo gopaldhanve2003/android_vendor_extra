@@ -1,7 +1,7 @@
-From c58b687211984381b86e2bf6855c9433c932f0ef Mon Sep 17 00:00:00 2001
+From 97a29ad2b02cae51397bc1c3addcd5bf34981645 Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Thu, 26 Dec 2024 20:32:09 +0530
-Subject: [PATCH 07/19] PIHooks: Drop netflix and arcore spoof
+Subject: [PATCH 07/25] PIHooks: Drop netflix and arcore spoof
 
 Change-Id: I80e636e2d9c3c40c75a8b024c38a4e95281c6c9e
 ---
@@ -93,5 +93,5 @@ index eb02ba9f460f..86f7bf106461 100644
 -    <java-symbol type="string" name="config_netflixSpoofModel" />
  </resources>
 -- 
-2.47.1
+2.48.1
 

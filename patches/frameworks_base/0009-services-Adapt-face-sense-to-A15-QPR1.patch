@@ -1,7 +1,7 @@
-From 6c1e319511cf051f092a9557d9c8a62ca275c0bb Mon Sep 17 00:00:00 2001
+From 2c7f5e3ac4b74cab3fff853f2e90ce5095bafc90 Mon Sep 17 00:00:00 2001
 From: COSMIC <rayavanindra@gmail.com>
 Date: Fri, 13 Dec 2024 13:38:26 +0530
-Subject: [PATCH 09/19] services: Adapt face sense to A15-QPR1
+Subject: [PATCH 09/25] services: Adapt face sense to A15-QPR1
 
 ---
  .../sensors/face/sense/BiometricTestSessionImpl.java       | 7 +++++++
@@ -105,5 +105,5 @@ index 08c075067082..78e291e2e66e 100644
          mAuthenticatorIds = authenticatorIds;
      }
 -- 
-2.47.1
+2.48.1
 

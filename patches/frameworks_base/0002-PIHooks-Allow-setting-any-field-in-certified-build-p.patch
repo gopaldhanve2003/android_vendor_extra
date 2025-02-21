@@ -1,7 +1,7 @@
-From e3e792948cd8d8398c522ebd6798bc3a281dd332 Mon Sep 17 00:00:00 2001
+From 30f109676c256a3d50905160650b44f4c2e77caf Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Sat, 18 Nov 2023 20:08:08 +0530
-Subject: [PATCH 02/19] PIHooks: Allow setting any field in certified build
+Subject: [PATCH 02/25] PIHooks: Allow setting any field in certified build
  props
 
 Brand and manufacturer may also be used for attestation checks, as seen
@@ -111,5 +111,5 @@ index 2d3b52919fde..a7038f072ff2 100644
      </string-array>
  
 -- 
-2.47.1
+2.48.1
 

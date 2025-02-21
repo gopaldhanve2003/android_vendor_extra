@@ -1,7 +1,7 @@
-From 62cb2e951adb776f95644f9fb6d855938af3918b Mon Sep 17 00:00:00 2001
+From 187f67c0b48b081a86c735cb3144ffc2b9169d55 Mon Sep 17 00:00:00 2001
 From: Park Ju Hyung <qkrwngud825@gmail.com>
 Date: Sat, 9 Oct 2021 03:22:39 -0400
-Subject: [PATCH 19/19] SystemUI: Implement burn-in protection for
+Subject: [PATCH 19/25] SystemUI: Implement burn-in protection for
  status/navbar
 
 Devices with OLED display suffer from
@@ -560,5 +560,5 @@ index 000000000000..442d70cef2d5
 +    }
 +}
 -- 
-2.47.1
+2.48.1
 

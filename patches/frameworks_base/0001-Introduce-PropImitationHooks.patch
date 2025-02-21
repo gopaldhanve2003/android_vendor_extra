@@ -1,7 +1,7 @@
-From 68f5caa48f77f28fef21c4f714f8e9d32b487296 Mon Sep 17 00:00:00 2001
+From 91099ed0eb2095c2d221be46aecf5806fb50b065 Mon Sep 17 00:00:00 2001
 From: Omkar Chandorkar <gotenksIN@aospa.co>
 Date: Thu, 1 Sep 2022 17:18:58 +0530
-Subject: [PATCH 01/19] Introduce PropImitationHooks
+Subject: [PATCH 01/25] Introduce PropImitationHooks
 
 This is a squash of the following commits.
 
@@ -435,5 +435,5 @@ index f626ce278f87..32a7941638af 100644
      }
  
 -- 
-2.47.1
+2.48.1
 
