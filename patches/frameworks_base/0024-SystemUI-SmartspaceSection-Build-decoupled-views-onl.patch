@@ -1,0 +1,34 @@
+From 2338766733c891b0e1aee03a534780434aeea91f Mon Sep 17 00:00:00 2001
+From: Pranav Vashi <neobuddy89@gmail.com>
+Date: Sun, 5 Jan 2025 08:58:43 +0530
+Subject: [PATCH 24/25] SystemUI: SmartspaceSection: Build decoupled views only
+ when required
+
+Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
+---
+ .../keyguard/ui/view/layout/sections/SmartspaceSection.kt   | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt b/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt
+index 99160f8a9158..4be739fb1bc1 100644
+--- a/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt
++++ b/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt
+@@ -71,12 +71,12 @@ constructor(
+         if (!MigrateClocksToBlueprint.isEnabled) return
+         if (!keyguardSmartspaceViewModel.isSmartspaceEnabled) return
+         smartspaceView = smartspaceController.buildAndConnectView(constraintLayout)
+-        weatherView = smartspaceController.buildAndConnectWeatherView(constraintLayout)
+-        dateWeatherView =
+-            smartspaceController.buildAndConnectDateView(constraintLayout) as ViewGroup
+         pastVisibility = smartspaceView?.visibility ?: View.GONE
+         constraintLayout.addView(smartspaceView)
+         if (keyguardSmartspaceViewModel.isDateWeatherDecoupled) {
++            dateWeatherView =
++                smartspaceController.buildAndConnectDateView(constraintLayout) as ViewGroup
++            weatherView = smartspaceController.buildAndConnectWeatherView(constraintLayout)
+             constraintLayout.addView(dateWeatherView)
+             // Place weather right after the date, before the extras (alarm and dnd)
+             val index = if (dateWeatherView?.childCount == 0) 0 else 1
+-- 
+2.48.1
+
