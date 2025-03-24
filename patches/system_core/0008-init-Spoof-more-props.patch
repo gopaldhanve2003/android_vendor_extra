@@ -1,4 +1,4 @@
-From 22578ef0a176f2921b4c80f5d194142cf9570288 Mon Sep 17 00:00:00 2001
+From 21b23216e6f155e4e938d3cd2d5efd36ea859116 Mon Sep 17 00:00:00 2001
 From: jhenrique09 <jhsv09@gmail.com>
 Date: Tue, 23 Aug 2022 17:11:54 -0300
 Subject: [PATCH 8/9] init: Spoof more props
@@ -39,5 +39,5 @@ index 5033186e0..aa7a2dcdd 100644
      "user", // ro.odm.build.type
      "release-keys", // ro.build.keys
 -- 
-2.47.1
+2.49.0
 

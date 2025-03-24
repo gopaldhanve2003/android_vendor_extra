@@ -1,0 +1,25 @@
+From 540c6d4fd0c88ea317f5c50cafded528d0186abe Mon Sep 17 00:00:00 2001
+From: AdarshGrewal <adarshgrewal@gmail.com>
+Date: Tue, 25 Mar 2025 00:02:24 +0530
+Subject: [PATCH 26/28] fixup! SystemUI: Fix smartspace layout
+
+---
+ .../keyguard/ui/view/layout/sections/SmartspaceSection.kt       | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt b/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt
+index 0e7d395130df..34297e0cbd4f 100644
+--- a/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt
++++ b/packages/SystemUI/src/com/android/systemui/keyguard/ui/view/layout/sections/SmartspaceSection.kt
+@@ -166,7 +166,7 @@ constructor(
+                 connect(
+                     sharedR.id.bc_smartspace_view,
+                     ConstraintSet.TOP,
+-                    R.id.lockscreen_clock_view,
++                    customR.id.lockscreen_clock_view,
+                     ConstraintSet.BOTTOM,
+                 )
+             }
+-- 
+2.49.0
+

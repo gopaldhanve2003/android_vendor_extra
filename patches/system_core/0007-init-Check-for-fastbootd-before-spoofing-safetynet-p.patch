@@ -1,4 +1,4 @@
-From 42e3c4fd4dfeb588781aae341294150b6f044727 Mon Sep 17 00:00:00 2001
+From f1dd027ffb20ce2b8bd909bfe906d48acc7a450a Mon Sep 17 00:00:00 2001
 From: Danny Lin <danny@kdrag0n.dev>
 Date: Wed, 7 Oct 2020 00:24:54 -0700
 Subject: [PATCH 7/9] init: Check for fastbootd before spoofing safetynet props
@@ -78,5 +78,5 @@ index 475c1706b..5033186e0 100644
  
      // Extra pops
 -- 
-2.47.1
+2.49.0
 

@@ -1,7 +1,7 @@
-From 1d21021f4358d27b33f48fc0b871d34f9e0a0ce9 Mon Sep 17 00:00:00 2001
+From d42c04f7b4dc5cc25e5f57056b0e43dfdcee8725 Mon Sep 17 00:00:00 2001
 From: Chris Crump <chriscrawford893@gmail.com>
-Date: Sat, 25 Nov 2023 11:35:30 +0000
-Subject: [PATCH 08/25] base: Initial SenseProvider for FaceSense service
+Date: Tue, 25 Mar 2025 00:56:47 +0530
+Subject: [PATCH 08/28] base: Initial SenseProvider for FaceSense service
 
 Thanks to Tobi to figure out the fix for FaceSense needing a reboot to work after registering a face model.
 Also thanks to someone5678 for fixing compile on QPR1.
@@ -99,7 +99,7 @@ index 6f29f618ee0d..d5c05297e236 100644
  
          logCalculateModeForPassiveAuth(unlockingAllowed, deviceInteractive, isKeyguardShowing,
 diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardBypassController.kt b/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardBypassController.kt
-index 316e1f13bc2b..86084cd1b38c 100644
+index 3242149eed92..e79d4d88a0a6 100644
 --- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardBypassController.kt
 +++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/KeyguardBypassController.kt
 @@ -119,6 +119,8 @@ class KeyguardBypassController @Inject constructor(
@@ -149,13 +149,13 @@ index 316e1f13bc2b..86084cd1b38c 100644
          pw.println("  bouncerShowing: $bouncerShowing")
          pw.println("  altBouncerShowing:" +
 diff --git a/services/core/Android.bp b/services/core/Android.bp
-index d714602c0145..e243c981eb96 100644
+index 9efd84a8838b..f6fed9a8ce50 100644
 --- a/services/core/Android.bp
 +++ b/services/core/Android.bp
-@@ -240,6 +240,7 @@ java_library_static {
-         "aconfig_new_storage_flags_lib",
-         "powerstats_flags_lib",
-         "locksettings_flags_lib",
+@@ -248,6 +248,7 @@ java_library_static {
+         "profiling_flags_lib",
+         "android.adpf.sessionmanager_aidl-java",
+         "uprobestats_flags_java_lib",
 +        "vendor.aospa.biometrics.face",
      ],
      javac_shard_size: 50,
@@ -2952,5 +2952,5 @@ index 000000000000..0499bc51ede6
 +
 +}
 -- 
-2.48.1
+2.49.0
 

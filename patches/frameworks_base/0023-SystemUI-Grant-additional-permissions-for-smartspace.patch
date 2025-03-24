@@ -1,7 +1,7 @@
-From 84fe310cba55227758b9f22c68f5c4c0bdb3ee62 Mon Sep 17 00:00:00 2001
+From 42bf517d8c0489893a475b68365820bb72cb4e55 Mon Sep 17 00:00:00 2001
 From: Andrzej Perczak <linux@andrzejperczak.com>
 Date: Tue, 8 Mar 2022 23:17:46 +0100
-Subject: [PATCH 23/25] SystemUI: Grant additional permissions for smartspace
+Subject: [PATCH 23/28] SystemUI: Grant additional permissions for smartspace
 
 Change-Id: I55df836bf545554eda95085bc71c7cbfca4cfcc5
 Signed-off-by: Andrzej Perczak <linux@andrzejperczak.com>
@@ -39,5 +39,5 @@ index 38ea4ac8d109..e9f5a0b03fcf 100644
          <permission name="android.permission.READ_FRAME_BUFFER"/>
          <permission name="android.permission.READ_NETWORK_USAGE_HISTORY"/>
 -- 
-2.48.1
+2.49.0
 

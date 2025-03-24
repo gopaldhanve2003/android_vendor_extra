@@ -1,7 +1,7 @@
-From 7e93c252b3e03427d629bc4d6f86f4a325307681 Mon Sep 17 00:00:00 2001
+From 0bda5e57bbbc87991411413c5dd6b04add0ad70d Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Wed, 20 Nov 2024 11:41:06 +0530
-Subject: [PATCH 17/25] SenseProvider: Align with lineage
+Subject: [PATCH 17/28] SenseProvider: Align with lineage
 
 Change-Id: Ie6e601e4c737db3f2c4a64742095abfea727160c
 ---
@@ -22,5 +22,5 @@ index c0a7aae053da..6573b9e7e88f 100644
  
      private synchronized ISenseService getDaemon() {
 -- 
-2.48.1
+2.49.0
 

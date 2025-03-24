@@ -1,7 +1,7 @@
-From 4918a2b7e4723884edf7ab4a33ea35c7f9ccc4eb Mon Sep 17 00:00:00 2001
+From 51f75393c025e30c8a8e29eb72fc0035e21ef599 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Sun, 7 Jan 2024 01:51:03 +0530
-Subject: [PATCH 15/25] SystemUI: biometrics: Follow user setting to confirm
+Subject: [PATCH 15/28] SystemUI: biometrics: Follow user setting to confirm
  face unlock
 
 * It seems that AOSP code migration has some pending clean up
@@ -42,10 +42,10 @@ index 230b30bc548e..f826872a7333 100644
      override fun setPrompt(
          promptInfo: PromptInfo,
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt b/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt
-index 168ba11309cc..07d2f1e822a2 100644
+index 4dcf26808a9e..9c39f1494963 100644
 --- a/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt
 +++ b/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt
-@@ -384,10 +384,7 @@ constructor(
+@@ -383,10 +383,7 @@ constructor(
       * If the API caller or the user's personal preferences require explicit confirmation after
       * successful authentication. Confirmation always required when in explicit flow.
       */
@@ -57,7 +57,7 @@ index 168ba11309cc..07d2f1e822a2 100644
  
      /**
       * When fingerprint and face modalities are enrolled, indicates whether only face auth has
-@@ -843,11 +840,9 @@ constructor(
+@@ -822,11 +819,9 @@ constructor(
      }
  
      private suspend fun needsExplicitConfirmation(modality: BiometricModality): Boolean {
@@ -71,5 +71,5 @@ index 168ba11309cc..07d2f1e822a2 100644
          // fingerprint only never requires confirmation
          return false
 -- 
-2.48.1
+2.49.0
 
