@@ -1,4 +1,4 @@
-From 21a521105a0d21ac699767d3c403a3f3d4431548 Mon Sep 17 00:00:00 2001
+From 6eecd5955415968afc35455ae7e32087b1da466d Mon Sep 17 00:00:00 2001
 From: jhenrique09 <jhenrique09.mcz@hotmail.com>
 Date: Fri, 20 Nov 2020 20:33:21 -0300
 Subject: [PATCH 5/9] init: Only set safetynet props if not eng build
@@ -39,5 +39,5 @@ index db0690bd4..241739203 100644
      // Restore the normal property override security after safetynet props have been set
      weaken_prop_override_security = false;
 -- 
-2.47.1
+2.49.0
 

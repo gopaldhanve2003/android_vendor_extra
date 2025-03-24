@@ -1,7 +1,7 @@
-From 7b1cf3b12f96fa52d8ffad9848748d115ad07c24 Mon Sep 17 00:00:00 2001
+From f9e29dd61e31338367d19a1334dedf79cb3d13f9 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Mon, 14 Oct 2024 17:04:40 +0530
-Subject: [PATCH 11/25] services: Force load FaceSense providers
+Subject: [PATCH 11/28] services: Force load FaceSense providers
 
 * Current AOSP implementation checks if HIDL/AIDL configs available and
   skips registering providers if configs not available.
@@ -38,7 +38,7 @@ index 2d802b21cf03..951054fca715 100644
              return;
          }
 diff --git a/services/core/java/com/android/server/biometrics/sensors/BiometricScheduler.java b/services/core/java/com/android/server/biometrics/sensors/BiometricScheduler.java
-index 82d5d4d8141d..8c66768f2878 100644
+index e8786be4d8e6..986fee9dd5b8 100644
 --- a/services/core/java/com/android/server/biometrics/sensors/BiometricScheduler.java
 +++ b/services/core/java/com/android/server/biometrics/sensors/BiometricScheduler.java
 @@ -311,6 +311,10 @@ public class BiometricScheduler<T, U> {
@@ -66,5 +66,5 @@ index 1a9be1e6a953..3853d4197983 100644
                  return;
              }
 -- 
-2.48.1
+2.49.0
 

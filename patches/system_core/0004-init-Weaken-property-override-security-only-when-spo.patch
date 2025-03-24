@@ -1,4 +1,4 @@
-From dbc8f7dc23ce46498f25666feece2ac582413f47 Mon Sep 17 00:00:00 2001
+From d3e0fdc0a66d09934637ae9e398a2a9a29f8bde6 Mon Sep 17 00:00:00 2001
 From: jhenrique09 <jhenrique09.mcz@hotmail.com>
 Date: Fri, 20 Nov 2020 11:34:54 -0300
 Subject: [PATCH 4/9] init: Weaken property override security only when
@@ -54,5 +54,5 @@ index 70536bc58..db0690bd4 100644
  
  void PropertyLoadDerivedDefaults() {
 -- 
-2.47.1
+2.49.0
 

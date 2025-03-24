@@ -1,4 +1,4 @@
-From 08ba189da6195d1e6fb9729a4c47dc8b25074eca Mon Sep 17 00:00:00 2001
+From 8c118e3c250e472e078f5a40a3601cf09c319f49 Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Fri, 8 Dec 2023 05:53:08 +0530
 Subject: [PATCH] system_properties: Introduce native PropImitationHooks
@@ -126,5 +126,5 @@ index e0d38a822..d9167709f 100644
    if (!pa) {
      async_safe_format_log(ANDROID_LOG_WARN, "libc", "Access denied finding property \"%s\"", name);
 -- 
-2.47.1
+2.49.0
 

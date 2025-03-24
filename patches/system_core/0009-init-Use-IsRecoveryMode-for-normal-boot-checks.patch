@@ -1,4 +1,4 @@
-From 4f22ebb1e18200ffc929209dd2504aa7ecebddff Mon Sep 17 00:00:00 2001
+From c76f4c3af197349deac9bc9e72b0aaf82762e784 Mon Sep 17 00:00:00 2001
 From: Albert I <kras@raphielgang.org>
 Date: Fri, 29 Apr 2022 23:42:44 +0800
 Subject: [PATCH 9/9] init: Use `IsRecoveryMode()` for normal boot checks
@@ -56,5 +56,5 @@ index aa7a2dcdd..bb64864e1 100644
      }
  
 -- 
-2.47.1
+2.49.0
 

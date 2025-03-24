@@ -1,7 +1,7 @@
-From 9c0c316edd4d63cbf88d5bc0870d0657796b2265 Mon Sep 17 00:00:00 2001
+From d6fbd165ca96c4a797eb75efe2fab5162f0b7e8b Mon Sep 17 00:00:00 2001
 From: clarencelol <clarencekuiek@proton.me>
 Date: Wed, 11 Dec 2024 15:18:34 +0800
-Subject: [PATCH 22/25] SystemUI: Adapt Smartspace A15-QPR1
+Subject: [PATCH 22/28] SystemUI: Adapt Smartspace A15-QPR1
 
 * Building error text
 error: BcSmartspaceView is not abstract and does not override abstract method setBgHandler(Handler) in SmartspaceView
@@ -36,5 +36,5 @@ index 7b3d5e3c8ce4..3ac117583423 100644
          int i;
          BaseTemplateCard baseTemplateCard;
 -- 
-2.48.1
+2.49.0
 

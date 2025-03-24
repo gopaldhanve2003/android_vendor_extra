@@ -1,27 +1,28 @@
-From 805659ad547a35315d314640107a657b59f1d51f Mon Sep 17 00:00:00 2001
+From e4acc29377ba9363e5df45a492186e4007dfbee6 Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Thu, 9 Feb 2023 10:51:56 +0530
-Subject: [PATCH 06/25] PIHooks: Spoof google photos
+Subject: [PATCH 06/28] PIHooks: Spoof google photos
 
 Change-Id: I2e66cba7c9098dd0063123db103407b2955d1c80
 ---
- .../app/ApplicationPackageManager.java        |  4 +-
+ .../app/ApplicationPackageManager.java        |  5 +-
  .../internal/util/PropImitationHooks.java     | 46 ++++++++++++++++++-
- 2 files changed, 47 insertions(+), 3 deletions(-)
+ 2 files changed, 48 insertions(+), 3 deletions(-)
 
 diff --git a/core/java/android/app/ApplicationPackageManager.java b/core/java/android/app/ApplicationPackageManager.java
-index c14ff36994e5..ae29c3e636af 100644
+index 9f3714cef2b1..a5250a69b150 100644
 --- a/core/java/android/app/ApplicationPackageManager.java
 +++ b/core/java/android/app/ApplicationPackageManager.java
-@@ -132,6 +132,7 @@ import com.android.internal.annotations.GuardedBy;
- import com.android.internal.annotations.Immutable;
- import com.android.internal.annotations.VisibleForTesting;
- import com.android.internal.os.SomeArgs;
-+import com.android.internal.util.PropImitationHooks;
+@@ -135,6 +135,8 @@ import com.android.internal.os.SomeArgs;
+ import com.android.internal.pm.RoSystemFeatures;
  import com.android.internal.util.UserIcons;
  
++import com.android.internal.util.PropImitationHooks;
++
  import com.nvidia.NvAppProfileService;
-@@ -844,7 +845,8 @@ public class ApplicationPackageManager extends PackageManager {
+ 
+ import dalvik.system.VMRuntime;
+@@ -836,7 +838,8 @@ public class ApplicationPackageManager extends PackageManager {
  
      @Override
      public boolean hasSystemFeature(String name, int version) {
@@ -128,5 +129,5 @@ index 5abbed928277..46ff19b1f250 100644
          if (DEBUG) Log.d(TAG, "[" + sProcessName + "] " + msg);
      }
 -- 
-2.48.1
+2.49.0
 

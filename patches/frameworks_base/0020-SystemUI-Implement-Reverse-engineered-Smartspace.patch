@@ -1,7 +1,7 @@
-From 53961ef9ec70d14e31b5c147cbf0bfb786bc14a2 Mon Sep 17 00:00:00 2001
+From 833ac9c7fc411617c99d94f5e1b3954c9b93b870 Mon Sep 17 00:00:00 2001
 From: Daniel Jacob Chittoor <djchittoor47@gmail.com>
 Date: Thu, 21 Jul 2022 01:37:15 +0530
-Subject: [PATCH 20/25] SystemUI: Implement Reverse-engineered Smartspace
+Subject: [PATCH 20/28] SystemUI: Implement Reverse-engineered Smartspace
 
 From SQ3A.220605.009.A1
 
@@ -296,10 +296,10 @@ Co-Authored-By: Adithya R <gh0strider.2k18.reborn@gmail.com>
  create mode 100644 packages/SystemUI/src/com/google/android/systemui/smartspace/KeyguardZenAlarmViewController.kt
 
 diff --git a/packages/SystemUI/Android.bp b/packages/SystemUI/Android.bp
-index bb9f690a6b21..904678091d78 100644
+index bc219dd5abef..2b7d2b68bc32 100644
 --- a/packages/SystemUI/Android.bp
 +++ b/packages/SystemUI/Android.bp
-@@ -577,6 +577,8 @@ android_library {
+@@ -503,6 +503,8 @@ android_library {
          "Traceur-res",
          "//frameworks/libs/systemui:motion_tool_lib",
          "//frameworks/libs/systemui:contextualeducationlib",
@@ -309,10 +309,10 @@ index bb9f690a6b21..904678091d78 100644
          "PlatformComposeCore",
          "PlatformComposeSceneTransitionLayout",
 diff --git a/packages/SystemUI/AndroidManifest.xml b/packages/SystemUI/AndroidManifest.xml
-index f0fbf682aa20..750b57938e3b 100644
+index a846cc8a8774..bbf3c3a7afc7 100644
 --- a/packages/SystemUI/AndroidManifest.xml
 +++ b/packages/SystemUI/AndroidManifest.xml
-@@ -390,6 +390,16 @@
+@@ -394,6 +394,16 @@
      <protected-broadcast android:name="com.android.systemui.action.ACTION_LAUNCH_MEDIA_OUTPUT_BROADCAST_DIALOG" />
      <protected-broadcast android:name="com.android.systemui.STARTED" />
  
@@ -329,7 +329,7 @@ index f0fbf682aa20..750b57938e3b 100644
      <application
          android:name=".SystemUIApplication"
          android:persistent="true"
-@@ -1047,7 +1057,8 @@
+@@ -1053,7 +1063,8 @@
          <provider android:name=".keyguard.KeyguardSliceProvider"
                    android:authorities="com.android.systemui.keyguard"
                    android:grantUriPermissions="true"
@@ -8521,7 +8521,7 @@ index 07a40c86d03a..5d80b46f65a4 100644
        avatar will no longer show on the lockscreen -->
      <bool name="flag_user_switcher_chip">false</bool>
 diff --git a/packages/SystemUI/src/com/android/systemui/SystemUIInitializer.java b/packages/SystemUI/src/com/android/systemui/SystemUIInitializer.java
-index 5c75a49818a6..09c6223f1dab 100644
+index f530522fb707..a6327e0dc9d3 100644
 --- a/packages/SystemUI/src/com/android/systemui/SystemUIInitializer.java
 +++ b/packages/SystemUI/src/com/android/systemui/SystemUIInitializer.java
 @@ -129,6 +129,10 @@ public abstract class SystemUIInitializer {
@@ -8536,10 +8536,10 @@ index 5c75a49818a6..09c6223f1dab 100644
  
      /**
 diff --git a/packages/SystemUI/src/com/android/systemui/dagger/SysUIComponent.java b/packages/SystemUI/src/com/android/systemui/dagger/SysUIComponent.java
-index 3fe6669de556..e51ada42ee6a 100644
+index 580896cb534e..7ac5da4655aa 100644
 --- a/packages/SystemUI/src/com/android/systemui/dagger/SysUIComponent.java
 +++ b/packages/SystemUI/src/com/android/systemui/dagger/SysUIComponent.java
-@@ -44,6 +44,8 @@ import com.android.wm.shell.startingsurface.StartingSurface;
+@@ -45,6 +45,8 @@ import com.android.wm.shell.startingsurface.StartingSurface;
  import com.android.wm.shell.sysui.ShellInterface;
  import com.android.wm.shell.taskview.TaskViewFactory;
  
@@ -8548,7 +8548,7 @@ index 3fe6669de556..e51ada42ee6a 100644
  import dagger.BindsInstance;
  import dagger.Subcomponent;
  
-@@ -182,4 +184,10 @@ public interface SysUIComponent {
+@@ -189,4 +191,10 @@ public interface SysUIComponent {
       * Member injection into the supplied argument.
       */
      void inject(PeopleProvider peopleProvider);
@@ -8560,7 +8560,7 @@ index 3fe6669de556..e51ada42ee6a 100644
 +    KeyguardSmartspaceController createKeyguardSmartspaceController();
  }
 diff --git a/packages/SystemUI/src/com/android/systemui/dagger/SystemUIModule.java b/packages/SystemUI/src/com/android/systemui/dagger/SystemUIModule.java
-index a491b2943d3e..b18b30db1b44 100644
+index 7cc3d2245621..0c44d882732d 100644
 --- a/packages/SystemUI/src/com/android/systemui/dagger/SystemUIModule.java
 +++ b/packages/SystemUI/src/com/android/systemui/dagger/SystemUIModule.java
 @@ -16,11 +16,13 @@
@@ -8577,7 +8577,7 @@ index a491b2943d3e..b18b30db1b44 100644
  
  import androidx.annotation.Nullable;
  
-@@ -45,6 +47,7 @@ import com.android.systemui.bouncer.data.repository.BouncerRepositoryModule;
+@@ -46,6 +48,7 @@ import com.android.systemui.bouncer.data.repository.BouncerRepositoryModule;
  import com.android.systemui.bouncer.domain.interactor.BouncerInteractorModule;
  import com.android.systemui.bouncer.ui.BouncerViewModule;
  import com.android.systemui.brightness.dagger.ScreenBrightnessModule;
@@ -8585,7 +8585,7 @@ index a491b2943d3e..b18b30db1b44 100644
  import com.android.systemui.classifier.FalsingModule;
  import com.android.systemui.clipboardoverlay.dagger.ClipboardOverlayModule;
  import com.android.systemui.common.data.CommonDataLayerModule;
-@@ -123,6 +126,7 @@ import com.android.systemui.statusbar.dagger.StatusBarModule;
+@@ -128,6 +131,7 @@ import com.android.systemui.statusbar.dagger.StatusBarModule;
  import com.android.systemui.statusbar.disableflags.dagger.DisableFlagsModule;
  import com.android.systemui.statusbar.events.StatusBarEventsModule;
  import com.android.systemui.statusbar.events.SystemStatusAnimationScheduler;
@@ -8593,15 +8593,15 @@ index a491b2943d3e..b18b30db1b44 100644
  import com.android.systemui.statusbar.notification.NotifPipelineFlags;
  import com.android.systemui.statusbar.notification.collection.NotifPipeline;
  import com.android.systemui.statusbar.notification.collection.inflation.NotificationRowBinder;
-@@ -139,6 +143,7 @@ import com.android.systemui.statusbar.phone.LetterboxModule;
+@@ -144,6 +148,7 @@ import com.android.systemui.statusbar.phone.LetterboxModule;
  import com.android.systemui.statusbar.pipeline.dagger.StatusBarPipelineModule;
- import com.android.systemui.statusbar.policy.HeadsUpManager;
+ import com.android.systemui.statusbar.notification.headsup.HeadsUpManager;
  import com.android.systemui.statusbar.policy.KeyguardStateController;
 +import com.android.systemui.statusbar.policy.NextAlarmController;
  import com.android.systemui.statusbar.policy.PolicyModule;
  import com.android.systemui.statusbar.policy.SensitiveNotificationProtectionController;
  import com.android.systemui.statusbar.policy.ZenModeController;
-@@ -153,6 +158,7 @@ import com.android.systemui.tuner.dagger.TunerModule;
+@@ -158,6 +163,7 @@ import com.android.systemui.tuner.dagger.TunerModule;
  import com.android.systemui.user.UserModule;
  import com.android.systemui.user.domain.UserDomainLayerModule;
  import com.android.systemui.util.EventLogModule;
@@ -8609,7 +8609,7 @@ index a491b2943d3e..b18b30db1b44 100644
  import com.android.systemui.util.concurrency.SysUIConcurrencyModule;
  import com.android.systemui.util.dagger.UtilModule;
  import com.android.systemui.util.kotlin.SysUICoroutinesModule;
-@@ -166,6 +172,11 @@ import com.android.systemui.wallet.dagger.WalletModule;
+@@ -171,6 +177,11 @@ import com.android.systemui.wallet.dagger.WalletModule;
  import com.android.systemui.wmshell.BubblesManager;
  import com.android.wm.shell.bubbles.Bubbles;
  
@@ -8621,7 +8621,7 @@ index a491b2943d3e..b18b30db1b44 100644
  import dagger.Binds;
  import dagger.BindsOptionalOf;
  import dagger.Module;
-@@ -456,4 +467,28 @@ public abstract class SystemUIModule {
+@@ -469,4 +480,28 @@ public abstract class SystemUIModule {
      static SettingsProxy.CurrentUserIdProvider provideCurrentUserId(UserTracker userTracker) {
          return userTracker::getUserId;
      }
@@ -9013,5 +9013,5 @@ index 000000000000..f18ace7264ca
 +    }
 +}
 -- 
-2.48.1
+2.49.0
 

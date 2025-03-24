@@ -1,7 +1,7 @@
-From 91099ed0eb2095c2d221be46aecf5806fb50b065 Mon Sep 17 00:00:00 2001
+From dcfc5e2066c20301706a006ed63492b375e77e8b Mon Sep 17 00:00:00 2001
 From: Omkar Chandorkar <gotenksIN@aospa.co>
 Date: Thu, 1 Sep 2022 17:18:58 +0530
-Subject: [PATCH 01/25] Introduce PropImitationHooks
+Subject: [PATCH 01/28] Introduce PropImitationHooks
 
 This is a squash of the following commits.
 
@@ -129,10 +129,10 @@ Change-Id: I7844dc9ac8e2f927e6bb565ee218210b194e6ef0
  create mode 100644 core/res/res/values/extra_symbols.xml
 
 diff --git a/core/java/android/app/Instrumentation.java b/core/java/android/app/Instrumentation.java
-index 93a9489849af..9c0490795f39 100644
+index 7eacaac29d4b..5350e2b3ecf8 100644
 --- a/core/java/android/app/Instrumentation.java
 +++ b/core/java/android/app/Instrumentation.java
-@@ -62,6 +62,7 @@ import android.view.Window;
+@@ -65,6 +65,7 @@ import android.view.Window;
  import android.view.WindowManagerGlobal;
  
  import com.android.internal.content.ReferrerIntent;
@@ -140,7 +140,7 @@ index 93a9489849af..9c0490795f39 100644
  
  import java.io.File;
  import java.lang.annotation.Retention;
-@@ -1353,6 +1354,7 @@ public class Instrumentation {
+@@ -1356,6 +1357,7 @@ public class Instrumentation {
          Application app = getFactory(context.getPackageName())
                  .instantiateApplication(cl, className);
          app.attach(context);
@@ -148,7 +148,7 @@ index 93a9489849af..9c0490795f39 100644
          return app;
      }
      
-@@ -1370,6 +1372,7 @@ public class Instrumentation {
+@@ -1373,6 +1375,7 @@ public class Instrumentation {
              ClassNotFoundException {
          Application app = (Application)clazz.newInstance();
          app.attach(context);
@@ -401,10 +401,10 @@ index e6a63b9c4c17..81ca30ea8676 100644
  
          if (response == null || response.metadata.certificate == null) {
 diff --git a/services/core/java/com/android/server/wm/ActivityTaskManagerService.java b/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
-index f626ce278f87..32a7941638af 100644
+index 63257f6a6280..73d6fa4b400a 100644
 --- a/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
 +++ b/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
-@@ -262,6 +262,7 @@ import com.android.internal.protolog.ProtoLog;
+@@ -261,6 +261,7 @@ import com.android.internal.protolog.ProtoLog;
  import com.android.internal.util.ArrayUtils;
  import com.android.internal.util.FastPrintWriter;
  import com.android.internal.util.FrameworkStatsLog;
@@ -412,7 +412,7 @@ index f626ce278f87..32a7941638af 100644
  import com.android.internal.util.function.pooled.PooledLambda;
  import com.android.server.LocalManagerRegistry;
  import com.android.server.LocalServices;
-@@ -1988,7 +1989,9 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
+@@ -2020,7 +2021,9 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
  
      @Override
      public RootTaskInfo getFocusedRootTaskInfo() throws RemoteException {
@@ -423,7 +423,7 @@ index f626ce278f87..32a7941638af 100644
          final long ident = Binder.clearCallingIdentity();
          try {
              synchronized (mGlobalLock) {
-@@ -3110,7 +3113,9 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
+@@ -3144,7 +3147,9 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
      /** Sets the task stack listener that gets callbacks when a task stack changes. */
      @Override
      public void registerTaskStackListener(ITaskStackListener listener) {
@@ -435,5 +435,5 @@ index f626ce278f87..32a7941638af 100644
      }
  
 -- 
-2.48.1
+2.49.0
 

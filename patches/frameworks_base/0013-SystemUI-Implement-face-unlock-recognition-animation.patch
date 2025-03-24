@@ -1,7 +1,7 @@
-From ebb155b30cc038ed6cb89ab5c9f8c6a94aa4b133 Mon Sep 17 00:00:00 2001
+From 64326626350a38bf730add72c678d4dd02dc1b25 Mon Sep 17 00:00:00 2001
 From: minaripenguin <minaripenguin@users.noreply.github.com>
 Date: Thu, 30 Nov 2023 10:39:01 +0800
-Subject: [PATCH 13/25] SystemUI: Implement face unlock recognition animation
+Subject: [PATCH 13/28] SystemUI: Implement face unlock recognition animation
  and text
 
 Co-authored-by: jhenrique09 <jhsv09@gmail.com>
@@ -117,10 +117,10 @@ index 000000000000..775a83dd35a2
 +    <string name="face_unlock_recognizing">Recognizing face...</string>
 +</resources>
 diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/KeyguardIndicationController.java b/packages/SystemUI/src/com/android/systemui/statusbar/KeyguardIndicationController.java
-index 47812adaea00..f02df85fe5f7 100644
+index 4bac6d5c1b40..4e8fb0f86c96 100644
 --- a/packages/SystemUI/src/com/android/systemui/statusbar/KeyguardIndicationController.java
 +++ b/packages/SystemUI/src/com/android/systemui/statusbar/KeyguardIndicationController.java
-@@ -113,6 +113,7 @@ import com.android.systemui.plugins.FalsingManager;
+@@ -112,6 +112,7 @@ import com.android.systemui.plugins.FalsingManager;
  import com.android.systemui.plugins.statusbar.StatusBarStateController;
  import com.android.systemui.res.R;
  import com.android.systemui.settings.UserTracker;
@@ -137,15 +137,15 @@ index 47812adaea00..f02df85fe5f7 100644
      private static final long TRANSIENT_BIOMETRIC_ERROR_TIMEOUT = 1300;
      public static final long DEFAULT_MESSAGE_TIME = 3500;
      public static final long DEFAULT_HIDE_DELAY_MS =
-@@ -164,6 +167,7 @@ public class KeyguardIndicationController {
-     private final UserTracker mUserTracker;
+@@ -165,6 +168,7 @@ public class KeyguardIndicationController {
      private final BouncerMessageInteractor mBouncerMessageInteractor;
+ 
      private ViewGroup mIndicationArea;
 +    private FaceUnlockImageView mFaceIconView;
      private KeyguardIndicationTextView mTopIndicationView;
      private KeyguardIndicationTextView mLockScreenIndicationView;
      private final IBatteryStats mBatteryInfo;
-@@ -223,6 +227,8 @@ public class KeyguardIndicationController {
+@@ -225,6 +229,8 @@ public class KeyguardIndicationController {
      private final FaceHelpMessageDeferral mFaceAcquiredMessageDeferral;
      private boolean mInited;
  
@@ -154,7 +154,7 @@ index 47812adaea00..f02df85fe5f7 100644
      private KeyguardUpdateMonitorCallback mUpdateMonitorCallback;
  
      private boolean mDozing;
-@@ -265,6 +271,15 @@ public class KeyguardIndicationController {
+@@ -264,6 +270,15 @@ public class KeyguardIndicationController {
                  mBiometricErrorMessageToShowOnScreenOn = null;
              }
          }
@@ -170,7 +170,7 @@ index 47812adaea00..f02df85fe5f7 100644
      };
      private boolean mFaceLockedOutThisAuthSession;
  
-@@ -352,6 +367,11 @@ public class KeyguardIndicationController {
+@@ -354,6 +369,11 @@ public class KeyguardIndicationController {
                      showActionToUnlock();
                  } else if (msg.what == MSG_RESET_ERROR_MESSAGE_ON_SCREEN_ON) {
                      mBiometricErrorMessageToShowOnScreenOn = null;
@@ -182,7 +182,7 @@ index 47812adaea00..f02df85fe5f7 100644
                  }
              }
          };
-@@ -393,6 +413,7 @@ public class KeyguardIndicationController {
+@@ -395,6 +415,7 @@ public class KeyguardIndicationController {
  
      public void setIndicationArea(ViewGroup indicationArea) {
          mIndicationArea = indicationArea;
@@ -229,7 +229,7 @@ index 47812adaea00..f02df85fe5f7 100644
      /**
       * Hides transient indication.
       */
-@@ -1499,8 +1545,17 @@ public class KeyguardIndicationController {
+@@ -1496,8 +1542,17 @@ public class KeyguardIndicationController {
          @Override
          public void onBiometricRunningStateChanged(boolean running,
                  BiometricSourceType biometricSourceType) {
@@ -249,7 +249,7 @@ index 47812adaea00..f02df85fe5f7 100644
              }
          }
  
-@@ -1685,6 +1740,7 @@ public class KeyguardIndicationController {
+@@ -1675,6 +1730,7 @@ public class KeyguardIndicationController {
  
              if (mDozing) {
                  hideBiometricMessage();
@@ -366,5 +366,5 @@ index 000000000000..5b6c7beff8dc
 +    }
 +}
 -- 
-2.48.1
+2.49.0
 
