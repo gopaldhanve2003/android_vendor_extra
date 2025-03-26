@@ -2,10 +2,6 @@
 <manifest>
   <remote fetch="https://gitlab.com/" name="gitlab" />
 
-  <!-- extras -->
-  <project path="vendor/extra" remote="github" name="AdarshGrewal/android_vendor_extra" revision="lineage-22.1" />
-  <project path="vendor/lineage-priv/keys" remote="github" name="AdarshGrewal/android_vendor_lineage-priv_keys" revision="master" />
-
   <!-- Face unlock -->
   <project path="packages/apps/FaceUnlock" remote="gitlab" name="AdarshGrewal/android_packages_apps_FaceUnlock" revision="lineage-22.1" />
 
