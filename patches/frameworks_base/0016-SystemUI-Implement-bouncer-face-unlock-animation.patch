@@ -1,4 +1,4 @@
-From 1a560030b7d42449d170952a39465411f1cf0ec6 Mon Sep 17 00:00:00 2001
+From bd0f17c79cda1953d525c3c84996d569b9df053b Mon Sep 17 00:00:00 2001
 From: minaripenguin <minaripenguin@users.noreply.github.com>
 Date: Sun, 17 Dec 2023 08:36:37 +0800
 Subject: [PATCH 16/28] SystemUI: Implement bouncer face unlock animation

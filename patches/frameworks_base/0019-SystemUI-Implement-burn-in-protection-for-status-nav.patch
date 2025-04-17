@@ -1,4 +1,4 @@
-From 73defae59a695ceb9fbf0b4599a0925464dd898a Mon Sep 17 00:00:00 2001
+From 15f47fbb0f848188458d7141d29010cafeb6ddca Mon Sep 17 00:00:00 2001
 From: Park Ju Hyung <qkrwngud825@gmail.com>
 Date: Sat, 9 Oct 2021 03:22:39 -0400
 Subject: [PATCH 19/28] SystemUI: Implement burn-in protection for
@@ -115,10 +115,10 @@ index 5c6478ed0895..bb51057376a0 100644
  
  /**
 diff --git a/packages/SystemUI/src/com/android/systemui/navigationbar/views/NavigationBarView.java b/packages/SystemUI/src/com/android/systemui/navigationbar/views/NavigationBarView.java
-index f76cab6772c6..5090fec3cf45 100644
+index c4abcd2afc4f..5577d5602433 100644
 --- a/packages/SystemUI/src/com/android/systemui/navigationbar/views/NavigationBarView.java
 +++ b/packages/SystemUI/src/com/android/systemui/navigationbar/views/NavigationBarView.java
-@@ -67,6 +67,7 @@ import com.android.systemui.Gefingerpoken;
+@@ -66,6 +66,7 @@ import com.android.systemui.Gefingerpoken;
  import com.android.systemui.model.SysUiState;
  import com.android.systemui.navigationbar.ScreenPinningNotify;
  import com.android.systemui.navigationbar.gestural.EdgeBackGestureHandler;
@@ -126,7 +126,7 @@ index f76cab6772c6..5090fec3cf45 100644
  import com.android.systemui.navigationbar.views.buttons.ButtonDispatcher;
  import com.android.systemui.navigationbar.views.buttons.ContextualButton;
  import com.android.systemui.navigationbar.views.buttons.ContextualButtonGroup;
-@@ -85,6 +86,7 @@ import com.android.systemui.shared.system.QuickStepContract;
+@@ -84,6 +85,7 @@ import com.android.systemui.shared.system.QuickStepContract;
  import com.android.systemui.statusbar.phone.AutoHideController;
  import com.android.systemui.statusbar.phone.CentralSurfaces;
  import com.android.systemui.statusbar.phone.LightBarTransitionsController;
@@ -134,9 +134,9 @@ index f76cab6772c6..5090fec3cf45 100644
  import com.android.wm.shell.back.BackAnimation;
  import com.android.wm.shell.pip.Pip;
  
-@@ -189,6 +191,9 @@ public class NavigationBarView extends FrameLayout {
-     private boolean mShowCursorKeys;
-     private boolean mImeVisible;
+@@ -180,6 +182,9 @@ public class NavigationBarView extends FrameLayout {
+     private boolean mShowSwipeUpUi;
+     private UpdateActiveTouchRegionsCallback mUpdateActiveTouchRegionsCallback;
  
 +    @Nullable
 +    private ViewGroup mNavigationBarContents = null;
@@ -144,7 +144,7 @@ index f76cab6772c6..5090fec3cf45 100644
      private class NavTransitionListener implements TransitionListener {
          private boolean mBackTransitioning;
          private boolean mHomeAppearing;
-@@ -880,12 +885,31 @@ public class NavigationBarView extends FrameLayout {
+@@ -833,12 +838,31 @@ public class NavigationBarView extends FrameLayout {
          mContextualButtonGroup.setButtonVisibility(R.id.accessibility_button, visible);
      }
  
@@ -177,10 +177,10 @@ index f76cab6772c6..5090fec3cf45 100644
          reloadNavIcons();
      }
 diff --git a/packages/SystemUI/src/com/android/systemui/statusbar/phone/CentralSurfacesImpl.java b/packages/SystemUI/src/com/android/systemui/statusbar/phone/CentralSurfacesImpl.java
-index b3c89296982b..b9b1b24ffde5 100644
+index b62e40e388ab..286d80af3762 100644
 --- a/packages/SystemUI/src/com/android/systemui/statusbar/phone/CentralSurfacesImpl.java
 +++ b/packages/SystemUI/src/com/android/systemui/statusbar/phone/CentralSurfacesImpl.java
-@@ -217,6 +217,7 @@ import com.android.systemui.statusbar.notification.stack.NotificationStackScroll
+@@ -216,6 +216,7 @@ import com.android.systemui.statusbar.notification.stack.NotificationStackScroll
  import com.android.systemui.statusbar.phone.dagger.StatusBarPhoneModule;
  import com.android.systemui.statusbar.policy.BatteryController;
  import com.android.systemui.statusbar.policy.BrightnessMirrorController;
@@ -188,7 +188,7 @@ index b3c89296982b..b9b1b24ffde5 100644
  import com.android.systemui.statusbar.policy.ConfigurationController;
  import com.android.systemui.statusbar.policy.ConfigurationController.ConfigurationListener;
  import com.android.systemui.statusbar.policy.DeviceProvisionedController;
-@@ -595,6 +596,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -592,6 +593,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
  
      private final ViewCaptureAwareWindowManager mViewCaptureAwareWindowManager;
  
@@ -197,7 +197,7 @@ index b3c89296982b..b9b1b24ffde5 100644
      /**
       * Public constructor for CentralSurfaces.
       *
-@@ -709,7 +712,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -706,7 +709,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
              BrightnessMirrorShowingInteractor brightnessMirrorShowingInteractor,
              GlanceableHubContainerController glanceableHubContainerController,
              EmergencyGestureIntentFactory emergencyGestureIntentFactory,
@@ -207,7 +207,7 @@ index b3c89296982b..b9b1b24ffde5 100644
      ) {
          mContext = context;
          mNotificationsController = notificationsController;
-@@ -818,6 +822,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -815,6 +819,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
              statusBarWindowStateController.addListener(this::onStatusBarWindowStateChanged);
          }
          mScreenOffAnimationController = screenOffAnimationController;
@@ -215,7 +215,7 @@ index b3c89296982b..b9b1b24ffde5 100644
  
          ShadeExpansionListener shadeExpansionListener = this::onPanelExpansionChanged;
          ShadeExpansionChangeEvent currentState =
-@@ -1266,6 +1271,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -1224,6 +1229,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                          mShadeSurface.updateExpansionAndVisibility();
                          setBouncerShowingForStatusBarComponents(mBouncerShowing);
                          checkBarModes();
@@ -223,7 +223,7 @@ index b3c89296982b..b9b1b24ffde5 100644
                      });
          }
          if (!StatusBarRootModernization.isEnabled() && !StatusBarConnectedDisplays.isEnabled()) {
-@@ -1555,6 +1561,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -1513,6 +1519,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
      protected void createNavigationBar(@Nullable RegisterStatusBarResult result) {
          StatusBarConnectedDisplays.assertInLegacyMode();
          mNavigationBarController.createNavigationBars(true /* includeDefaultDisplay */, result);
@@ -231,7 +231,7 @@ index b3c89296982b..b9b1b24ffde5 100644
      }
  
      /**
-@@ -2592,6 +2599,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -2550,6 +2557,8 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
  
              updateNotificationPanelTouchState();
              getNotificationShadeWindowViewController().cancelCurrentTouch();
@@ -240,7 +240,7 @@ index b3c89296982b..b9b1b24ffde5 100644
              if (mLaunchCameraOnFinishedGoingToSleep) {
                  mLaunchCameraOnFinishedGoingToSleep = false;
  
-@@ -2759,6 +2768,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
+@@ -2717,6 +2726,7 @@ public class CentralSurfacesImpl implements CoreStartable, CentralSurfaces {
                  }
              }
              updateScrimController();

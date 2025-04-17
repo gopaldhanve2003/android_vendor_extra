@@ -1,4 +1,4 @@
-From 540c6d4fd0c88ea317f5c50cafded528d0186abe Mon Sep 17 00:00:00 2001
+From 124e7bd329fdbc640b2732a10789606dd0fab39c Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Tue, 25 Mar 2025 00:02:24 +0530
 Subject: [PATCH 26/28] fixup! SystemUI: Fix smartspace layout

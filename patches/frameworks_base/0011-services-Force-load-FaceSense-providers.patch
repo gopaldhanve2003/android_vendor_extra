@@ -1,4 +1,4 @@
-From f9e29dd61e31338367d19a1334dedf79cb3d13f9 Mon Sep 17 00:00:00 2001
+From c94ec22ea39a67fa85e7a44155bb99d79b8169e3 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Mon, 14 Oct 2024 17:04:40 +0530
 Subject: [PATCH 11/28] services: Force load FaceSense providers
@@ -16,7 +16,7 @@ Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
  3 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/services/core/java/com/android/server/biometrics/AuthService.java b/services/core/java/com/android/server/biometrics/AuthService.java
-index 2d802b21cf03..951054fca715 100644
+index cdbc548f3737..2fb0137386b0 100644
 --- a/services/core/java/com/android/server/biometrics/AuthService.java
 +++ b/services/core/java/com/android/server/biometrics/AuthService.java
 @@ -73,6 +73,7 @@ import com.android.internal.annotations.VisibleForTesting;

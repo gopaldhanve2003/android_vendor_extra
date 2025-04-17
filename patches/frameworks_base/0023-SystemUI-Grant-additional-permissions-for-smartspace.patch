@@ -1,4 +1,4 @@
-From 42bf517d8c0489893a475b68365820bb72cb4e55 Mon Sep 17 00:00:00 2001
+From 7c95f3c1a19954e865d662d0f88263dee3b58a6d Mon Sep 17 00:00:00 2001
 From: Andrzej Perczak <linux@andrzejperczak.com>
 Date: Tue, 8 Mar 2022 23:17:46 +0100
 Subject: [PATCH 23/28] SystemUI: Grant additional permissions for smartspace

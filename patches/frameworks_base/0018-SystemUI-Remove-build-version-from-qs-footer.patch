@@ -1,4 +1,4 @@
-From 58eef3ba43b26161f5e48511c9091215dd07da32 Mon Sep 17 00:00:00 2001
+From 3c1382e68965bce932846b38028bbcabd73fbae1 Mon Sep 17 00:00:00 2001
 From: jhenrique09 <jhenrique09.mcz@hotmail.com>
 Date: Tue, 10 Sep 2019 22:48:14 -0300
 Subject: [PATCH 18/28] SystemUI: Remove build version from qs footer

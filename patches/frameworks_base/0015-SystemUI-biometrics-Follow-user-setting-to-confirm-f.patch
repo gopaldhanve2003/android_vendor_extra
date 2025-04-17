@@ -1,4 +1,4 @@
-From 51f75393c025e30c8a8e29eb72fc0035e21ef599 Mon Sep 17 00:00:00 2001
+From 939ebd40a728fae073f376690861c76a1508a917 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Sun, 7 Jan 2024 01:51:03 +0530
 Subject: [PATCH 15/28] SystemUI: biometrics: Follow user setting to confirm

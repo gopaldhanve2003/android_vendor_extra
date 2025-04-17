@@ -1,4 +1,4 @@
-From 7ac943a0ee260a553cb87a529f053e493f1ab1d8 Mon Sep 17 00:00:00 2001
+From edce0a8ead682efac519f0a98d2cd176a0cc606e Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Thu, 26 Dec 2024 20:32:09 +0530
 Subject: [PATCH 07/28] PIHooks: Drop netflix and arcore spoof

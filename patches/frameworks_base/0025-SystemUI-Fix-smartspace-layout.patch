@@ -1,4 +1,4 @@
-From 5fa303cb3872eb92a38dc05ff23d2bc69ce8ff90 Mon Sep 17 00:00:00 2001
+From 645f5e6444f22b46c6240d76989533e55794a0c9 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Thu, 9 Jan 2025 00:21:31 +0530
 Subject: [PATCH 25/28] SystemUI: Fix smartspace layout

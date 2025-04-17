@@ -1,4 +1,4 @@
-From d42c04f7b4dc5cc25e5f57056b0e43dfdcee8725 Mon Sep 17 00:00:00 2001
+From 7c3a1e7cd66f2dcae89d1c2b37d0ec2bcd79dff7 Mon Sep 17 00:00:00 2001
 From: Chris Crump <chriscrawford893@gmail.com>
 Date: Tue, 25 Mar 2025 00:56:47 +0530
 Subject: [PATCH 08/28] base: Initial SenseProvider for FaceSense service

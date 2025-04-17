@@ -1,4 +1,4 @@
-From 72e6f87123f1f73e5c06a53b9597981876b6c49a Mon Sep 17 00:00:00 2001
+From d21d544b088bf4925a2b43d64e048f0b18eed6d1 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Sun, 5 Jan 2025 08:58:43 +0530
 Subject: [PATCH 24/28] SystemUI: SmartspaceSection: Build decoupled views only

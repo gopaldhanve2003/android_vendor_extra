@@ -1,4 +1,4 @@
-From c4dd6fe3c2853bf26a97e3c4dcffd82b03dd52a1 Mon Sep 17 00:00:00 2001
+From 49c8788df1dab9fc5caecda66287a746c477a15e Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Tue, 25 Mar 2025 00:24:09 +0530
 Subject: [PATCH 27/28] fixup! SystemUI: Implement Reverse-engineered

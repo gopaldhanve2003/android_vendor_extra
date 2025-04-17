@@ -1,4 +1,4 @@
-From 3fa5c23cfa25cd5ef9bbcd37f3eb2e27b01c6feb Mon Sep 17 00:00:00 2001
+From da1b2a93d42dd0dea8fb131276a1ab0b04d56dff Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Mon, 4 Dec 2023 01:45:18 +0530
 Subject: [PATCH 14/28] SystemUI: Use proper tint for face unlock icon
