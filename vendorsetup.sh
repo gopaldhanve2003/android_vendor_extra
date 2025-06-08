@@ -274,4 +274,3 @@ apply_patches() {
 
 enable_ccache
 enable_gms
-enable_thin_lto
