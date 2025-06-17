@@ -253,6 +253,10 @@ release() {
 }
 
 apply_patches() {
+    cd ${ANDROID_BUILD_TOP}
+
+    ./vendor/lineage/build/tools/repopick.py 427210 #qssi recovery stuff
+
     PATCHES_PATH=$PWD/vendor/extra/patches
 
     for project_name in $(cd "${PATCHES_PATH}"; echo */); do
