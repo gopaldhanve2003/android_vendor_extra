@@ -1,7 +1,7 @@
-From 2ec71470fd8630fc567ae4a62345c8579c3b35ec Mon Sep 17 00:00:00 2001
+From 1204d5ad3067cfd1d58db3f01b142e0808ce90ec Mon Sep 17 00:00:00 2001
 From: minaripenguin <minaripenguin@users.noreply.github.com>
 Date: Thu, 30 Nov 2023 10:39:01 +0800
-Subject: [PATCH 13/28] SystemUI: Implement face unlock recognition animation
+Subject: [PATCH 06/15] SystemUI: Implement face unlock recognition animation
  and text
 
 Co-authored-by: jhenrique09 <jhsv09@gmail.com>
@@ -366,5 +366,5 @@ index 000000000000..5b6c7beff8dc
 +    }
 +}
 -- 
-2.49.0
+2.50.0
 

@@ -1,7 +1,7 @@
-From b05b44c9fbd9f4f230fb1b6a82cd7205b4212942 Mon Sep 17 00:00:00 2001
+From e75066809797f92337b9e406de4e371b9a0cfdcb Mon Sep 17 00:00:00 2001
 From: someone5678 <someone5678@users.noreply.github.com>
 Date: Mon, 8 Jan 2024 18:42:13 +0900
-Subject: [PATCH 10/28] FaceService: Conditionally add ParanoidSense
+Subject: [PATCH 03/15] FaceService: Conditionally add ParanoidSense
 
 * We allows devices to use their own FaceService as ParanoidSense has weak modality
 * To make above impl complete, conditionally add ParanoidSense and un-comment AIDL provider support
@@ -68,5 +68,5 @@ index 5b27d9f66881..1a9be1e6a953 100644
          }
  
 -- 
-2.49.0
+2.50.0
 
