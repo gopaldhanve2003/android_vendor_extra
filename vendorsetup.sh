@@ -46,6 +46,11 @@ release() {
     project="$(basename ${ANDROID_BUILD_TOP})"
     sf_project_name=""
     extraimages=""
+
+    if [[ "${device}" == "garnet" ]]; then
+        sf_project_name="garnetrandom"
+        extraimages="dtboimage initbootimage recoveryimage vendorbootimage" 
+    fi
     
     if [[ "${device}" == "zircon" ]]; then
         sf_project_name="zirconrandom"
