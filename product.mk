@@ -2,10 +2,7 @@ ifneq ($(BUILD_VANILLA), true)
 
 # Pixel
 $(call inherit-product, vendor/pixel/clocks/products/clocks.mk)
-$(call inherit-product, vendor/pixel/gms/products/gms.mk)
 $(call inherit-product, vendor/pixel/gsans/products/gsans.mk)
-$(call inherit-product, vendor/pixel/launcher/products/launcher.mk)
-
 endif
 
 # Face Unlock
