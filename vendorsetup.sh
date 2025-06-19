@@ -80,10 +80,10 @@ release() {
     git pull origin "${project}"
 
     if git fetch origin "${project}"; then
-        git checkout origin/"${project}"
+        git checkout -B "${project}" origin/"${project}"
     else
         git checkout --orphan "${project}"
-        git rm -rf .
+        git rm -rf ${device_variant}.json
     fi
 
     breakfast "${device}"
