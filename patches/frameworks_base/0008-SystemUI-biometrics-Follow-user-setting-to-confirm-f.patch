@@ -1,4 +1,4 @@
-From f5a373062b942b7b2f1269262d1bd36b506982c6 Mon Sep 17 00:00:00 2001
+From 98b14ab02cb328b6c1995d9bb79645044b058dba Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Sun, 7 Jan 2024 01:51:03 +0530
 Subject: [PATCH 08/15] SystemUI: biometrics: Follow user setting to confirm
@@ -19,7 +19,7 @@ Signed-off-by: Dmitrii <bankersenator@gmail.com>
  2 files changed, 3 insertions(+), 16 deletions(-)
 
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/data/repository/PromptRepository.kt b/packages/SystemUI/src/com/android/systemui/biometrics/data/repository/PromptRepository.kt
-index 230b30bc548e..f826872a7333 100644
+index cce33fdf16c1..f35f13251e50 100644
 --- a/packages/SystemUI/src/com/android/systemui/biometrics/data/repository/PromptRepository.kt
 +++ b/packages/SystemUI/src/com/android/systemui/biometrics/data/repository/PromptRepository.kt
 @@ -125,17 +125,9 @@ constructor(
@@ -42,10 +42,10 @@ index 230b30bc548e..f826872a7333 100644
      override fun setPrompt(
          promptInfo: PromptInfo,
 diff --git a/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt b/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt
-index 4dcf26808a9e..9c39f1494963 100644
+index 0902d19b6787..9e84006bf816 100644
 --- a/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt
 +++ b/packages/SystemUI/src/com/android/systemui/biometrics/ui/viewmodel/PromptViewModel.kt
-@@ -383,10 +383,7 @@ constructor(
+@@ -394,10 +394,7 @@ constructor(
       * If the API caller or the user's personal preferences require explicit confirmation after
       * successful authentication. Confirmation always required when in explicit flow.
       */
@@ -57,7 +57,7 @@ index 4dcf26808a9e..9c39f1494963 100644
  
      /**
       * When fingerprint and face modalities are enrolled, indicates whether only face auth has
-@@ -822,11 +819,9 @@ constructor(
+@@ -833,11 +830,9 @@ constructor(
      }
  
      private suspend fun needsExplicitConfirmation(modality: BiometricModality): Boolean {

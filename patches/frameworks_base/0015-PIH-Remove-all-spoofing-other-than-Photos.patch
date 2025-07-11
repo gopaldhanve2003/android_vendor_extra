@@ -1,4 +1,4 @@
-From 5de5fd93abd7796567f4b8590962933d32ac3cd1 Mon Sep 17 00:00:00 2001
+From e1baa24fc3b658b8f4ee2f7cc663efd93e37d3a6 Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Wed, 18 Jun 2025 19:30:24 +0530
 Subject: [PATCH 15/15] PIH: Remove all spoofing other than Photos
@@ -340,10 +340,10 @@ index 81ca30ea8676..e6a63b9c4c17 100644
  
          if (response == null || response.metadata.certificate == null) {
 diff --git a/services/core/java/com/android/server/wm/ActivityTaskManagerService.java b/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
-index 73d6fa4b400a..63257f6a6280 100644
+index 1a499e15cb4a..fac92ee319f2 100644
 --- a/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
 +++ b/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
-@@ -261,7 +261,6 @@ import com.android.internal.protolog.ProtoLog;
+@@ -256,7 +256,6 @@ import com.android.internal.protolog.ProtoLog;
  import com.android.internal.util.ArrayUtils;
  import com.android.internal.util.FastPrintWriter;
  import com.android.internal.util.FrameworkStatsLog;
@@ -351,7 +351,7 @@ index 73d6fa4b400a..63257f6a6280 100644
  import com.android.internal.util.function.pooled.PooledLambda;
  import com.android.server.LocalManagerRegistry;
  import com.android.server.LocalServices;
-@@ -2021,9 +2020,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
+@@ -2027,9 +2026,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
  
      @Override
      public RootTaskInfo getFocusedRootTaskInfo() throws RemoteException {
@@ -362,7 +362,7 @@ index 73d6fa4b400a..63257f6a6280 100644
          final long ident = Binder.clearCallingIdentity();
          try {
              synchronized (mGlobalLock) {
-@@ -3147,9 +3144,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
+@@ -3190,9 +3187,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
      /** Sets the task stack listener that gets callbacks when a task stack changes. */
      @Override
      public void registerTaskStackListener(ITaskStackListener listener) {

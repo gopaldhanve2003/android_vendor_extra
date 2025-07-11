@@ -1,4 +1,4 @@
-From d07284b8a28011da0ce11636a6ae529c1476f2b7 Mon Sep 17 00:00:00 2001
+From 48c302315af08465830a93bd2e3495585ad21b62 Mon Sep 17 00:00:00 2001
 From: minaripenguin <minaripenguin@users.noreply.github.com>
 Date: Sun, 28 Apr 2024 08:22:52 +0800
 Subject: [PATCH 05/15] SystemUI: Disable FaceUnlock Lockouts
@@ -12,7 +12,7 @@ Signed-off-by: Dmitrii <bankersenator@gmail.com>
  2 files changed, 5 insertions(+), 13 deletions(-)
 
 diff --git a/packages/SystemUI/src/com/android/systemui/deviceentry/data/repository/DeviceEntryFaceAuthRepository.kt b/packages/SystemUI/src/com/android/systemui/deviceentry/data/repository/DeviceEntryFaceAuthRepository.kt
-index 514242b41eb1..bf13582a840b 100644
+index 449a995b782a..e44800a58976 100644
 --- a/packages/SystemUI/src/com/android/systemui/deviceentry/data/repository/DeviceEntryFaceAuthRepository.kt
 +++ b/packages/SystemUI/src/com/android/systemui/deviceentry/data/repository/DeviceEntryFaceAuthRepository.kt
 @@ -225,7 +225,7 @@ constructor(
@@ -24,7 +24,7 @@ index 514242b41eb1..bf13582a840b 100644
      }
  
      private val faceLockoutResetCallback =
-@@ -474,7 +474,7 @@ constructor(
+@@ -476,7 +476,7 @@ constructor(
              override fun onAuthenticationError(errorCode: Int, errString: CharSequence?) {
                  val errorStatus = ErrorFaceAuthenticationStatus(errorCode, errString.toString())
                  if (errorStatus.isLockoutError()) {
@@ -34,10 +34,10 @@ index 514242b41eb1..bf13582a840b 100644
                  _isAuthenticated.value = false
                  _authenticationStatus.value = errorStatus
 diff --git a/packages/SystemUI/src/com/android/systemui/deviceentry/domain/interactor/SystemUIDeviceEntryFaceAuthInteractor.kt b/packages/SystemUI/src/com/android/systemui/deviceentry/domain/interactor/SystemUIDeviceEntryFaceAuthInteractor.kt
-index b19b2d9ece02..c0541f166f76 100644
+index 1e50205500f9..a8cb6b72f5f3 100644
 --- a/packages/SystemUI/src/com/android/systemui/deviceentry/domain/interactor/SystemUIDeviceEntryFaceAuthInteractor.kt
 +++ b/packages/SystemUI/src/com/android/systemui/deviceentry/domain/interactor/SystemUIDeviceEntryFaceAuthInteractor.kt
-@@ -320,17 +320,9 @@ constructor(
+@@ -335,17 +335,9 @@ constructor(
      override val isBypassEnabled: Flow<Boolean> = repository.isBypassEnabled
  
      private fun runFaceAuth(uiEvent: FaceAuthUiEvent, fallbackToDetect: Boolean) {

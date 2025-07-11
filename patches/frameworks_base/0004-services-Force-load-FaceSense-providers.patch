@@ -1,4 +1,4 @@
-From c0871d1dedb33d45a3289d89920d9c628538a090 Mon Sep 17 00:00:00 2001
+From cf9c3e844435b4a3ea0478aa90470c41599735fb Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Mon, 14 Oct 2024 17:04:40 +0530
 Subject: [PATCH 04/15] services: Force load FaceSense providers
@@ -16,10 +16,10 @@ Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
  3 files changed, 8 insertions(+), 2 deletions(-)
 
 diff --git a/services/core/java/com/android/server/biometrics/AuthService.java b/services/core/java/com/android/server/biometrics/AuthService.java
-index cdbc548f3737..2fb0137386b0 100644
+index abe2fca2c4a5..95577e2eb439 100644
 --- a/services/core/java/com/android/server/biometrics/AuthService.java
 +++ b/services/core/java/com/android/server/biometrics/AuthService.java
-@@ -73,6 +73,7 @@ import com.android.internal.annotations.VisibleForTesting;
+@@ -72,6 +72,7 @@ import com.android.internal.annotations.VisibleForTesting;
  import com.android.internal.util.ArrayUtils;
  import com.android.server.SystemService;
  import com.android.server.biometrics.sensors.face.FaceService;
@@ -27,7 +27,7 @@ index cdbc548f3737..2fb0137386b0 100644
  import com.android.server.biometrics.sensors.fingerprint.FingerprintService;
  import com.android.server.companion.virtual.VirtualDeviceManagerInternal;
  
-@@ -845,7 +846,8 @@ public class AuthService extends SystemService {
+@@ -838,7 +839,8 @@ public class AuthService extends SystemService {
              final String[] hidlConfigStrings, final Context context,
              final IFaceService faceService, final BiometricHandlerProvider handlerProvider) {
          if ((hidlConfigStrings == null || hidlConfigStrings.length == 0)
