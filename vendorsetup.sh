@@ -49,7 +49,7 @@ release() {
 
     if [[ "${device}" == "garnet" ]]; then
         sf_project_name="garnetrandom"
-        extraimages="dtboimage initbootimage recoveryimage vendorbootimage" 
+        extraimages="dtboimage recoveryimage vendorbootimage" 
     fi
     
     if [[ "${device}" == "zircon" ]]; then
