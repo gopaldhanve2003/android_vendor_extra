@@ -1,7 +1,7 @@
-From cf9c3e844435b4a3ea0478aa90470c41599735fb Mon Sep 17 00:00:00 2001
+From 5fc6cbb0f973714c063868bed12d8bc944211658 Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Mon, 14 Oct 2024 17:04:40 +0530
-Subject: [PATCH 04/15] services: Force load FaceSense providers
+Subject: [PATCH 04/19] services: Force load FaceSense providers
 
 * Current AOSP implementation checks if HIDL/AIDL configs available and
   skips registering providers if configs not available.
@@ -66,5 +66,5 @@ index 1a9be1e6a953..3853d4197983 100644
                  return;
              }
 -- 
-2.50.0
+2.51.0
 

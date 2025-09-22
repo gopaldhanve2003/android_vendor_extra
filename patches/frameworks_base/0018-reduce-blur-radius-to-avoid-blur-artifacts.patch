@@ -1,0 +1,29 @@
+From 91b872549c5dc74dc5e5fc976f9351de503f0fd1 Mon Sep 17 00:00:00 2001
+From: rmp22 <195054967+rmp22@users.noreply.github.com>
+Date: Wed, 2 Jul 2025 09:20:33 +0800
+Subject: [PATCH 18/19] reduce blur radius to avoid blur artifacts
+
+60px on 411dp device
+
+Change-Id: I0505866cb0d64a2b64107f646ccf6f7e5fafd2d3
+Signed-off-by: rmp22 <195054967+rmp22@users.noreply.github.com>
+---
+ packages/SystemUI/res/values/dimens.xml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/packages/SystemUI/res/values/dimens.xml b/packages/SystemUI/res/values/dimens.xml
+index ad441248a750..1d41aebac3f2 100644
+--- a/packages/SystemUI/res/values/dimens.xml
++++ b/packages/SystemUI/res/values/dimens.xml
+@@ -1282,7 +1282,7 @@
+     <dimen name="max_shade_content_blur_radius">@dimen/max_window_blur_radius</dimen>
+ 
+     <!-- Blur radius behind Notification Shade -->
+-    <dimen name="max_shade_window_blur_radius">34dp</dimen>
++    <dimen name="max_shade_window_blur_radius">23.36dp</dimen>
+ 
+     <!-- How much into a DisplayCutout's bounds we can go, on each side -->
+     <dimen name="display_cutout_margin_consumption">0px</dimen>
+-- 
+2.51.0
+

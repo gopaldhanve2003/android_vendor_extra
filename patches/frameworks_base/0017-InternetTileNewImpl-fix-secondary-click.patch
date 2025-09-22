@@ -1,0 +1,56 @@
+From fdf2cd8e5b8d8841484b48e06e7ac7bcc96446c3 Mon Sep 17 00:00:00 2001
+From: rmp22 <195054967+rmp22@users.noreply.github.com>
+Date: Sat, 5 Jul 2025 10:17:41 +0800
+Subject: [PATCH 17/19] InternetTileNewImpl: fix secondary click
+
+Change-Id: Ib9420f5fb7dd0f249c6703a60b151b78fd6a5c24
+---
+ .../android/systemui/qs/tiles/InternetTileNewImpl.kt  | 11 ++++++++++-
+ 1 file changed, 10 insertions(+), 1 deletion(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tiles/InternetTileNewImpl.kt b/packages/SystemUI/src/com/android/systemui/qs/tiles/InternetTileNewImpl.kt
+index e48e943dd3f4..4b74c293af14 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/tiles/InternetTileNewImpl.kt
++++ b/packages/SystemUI/src/com/android/systemui/qs/tiles/InternetTileNewImpl.kt
+@@ -36,6 +36,7 @@ import com.android.systemui.qs.logging.QSLogger
+ import com.android.systemui.qs.tileimpl.QSTileImpl
+ import com.android.systemui.qs.tiles.dialog.InternetDetailsViewModel
+ import com.android.systemui.qs.tiles.dialog.InternetDialogManager
++import com.android.systemui.qs.tiles.dialog.WifiStateWorker
+ import com.android.systemui.res.R
+ import com.android.systemui.statusbar.connectivity.AccessPointController
+ import com.android.systemui.statusbar.pipeline.shared.ui.binder.InternetTileBinder
+@@ -59,6 +60,7 @@ constructor(
+     private val internetDialogManager: InternetDialogManager,
+     private val accessPointController: AccessPointController,
+     private val internetDetailsViewModelFactory: InternetDetailsViewModel.Factory,
++    private val wifiStateWorker: WifiStateWorker,
+ ) :
+     QSTileImpl<QSTile.BooleanState>(
+         host,
+@@ -84,7 +86,10 @@ constructor(
+         mContext.getString(R.string.quick_settings_internet_label)
+ 
+     override fun newTileState(): QSTile.BooleanState {
+-        return QSTile.BooleanState().also { it.forceExpandIcon = true }
++        return QSTile.BooleanState().also {
++             it.forceExpandIcon = true
++             it.handlesSecondaryClick = true
++        }
+     }
+ 
+     override fun handleClick(expandable: Expandable?) {
+@@ -98,6 +103,10 @@ constructor(
+         }
+     }
+ 
++    override fun handleSecondaryClick(expandable: Expandable?) {
++        wifiStateWorker.setWifiEnabled(!wifiStateWorker.isWifiEnabled())
++    }
++
+     override fun getDetailsViewModel(): TileDetailsViewModel {
+         return internetDetailsViewModelFactory.create()
+     }
+-- 
+2.51.0
+

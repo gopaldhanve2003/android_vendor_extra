@@ -1,0 +1,50 @@
+From c48cf26d6457be777c086586c15d0a8629ed386f Mon Sep 17 00:00:00 2001
+From: Dmitrii <bankersenator@gmail.com>
+Date: Mon, 30 Jun 2025 07:11:14 +0000
+Subject: [PATCH 16/19] SystemUI: fix squeeze effect crash
+
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: java.lang.RuntimeException: java.lang.reflect.InvocationTargetException
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:608)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: Caused by: java.lang.reflect.InvocationTargetException
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at java.lang.reflect.Method.invoke(Native Method)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:598)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	... 1 more
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: Caused by: org.xmlpull.v1.XmlPullParserException: Binary XML file line #15<VectorGraphic> tag requires viewportWidth > 0
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at androidx.compose.ui.res.VectorResources_androidKt.loadVectorResourceInner(go/retraceme e911c786806b7955964b8841059c02642f702bf6b8685af03e9713a7581d6ca8:1191)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at androidx.compose.ui.res.VectorResources_androidKt.vectorResource(go/retraceme e911c786806b7955964b8841059c02642f702bf6b8685af03e9713a7581d6ca8:85)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at com.android.systemui.topwindoweffects.ui.compose.SqueezeEffectKt.SqueezeEffect(go/retraceme e911c786806b7955964b8841059c02642f702bf6b8685af03e9713a7581d6ca8:153)
+06-30 12:13:32.934 15362 15362 E AndroidRuntime: 	at com.android.systemui.topwindoweffects.ui.compose.EffectsWindowRoot.Content(go/retraceme e911c786806b7955964b8841059c02642f702bf6b8685af03e9713a7581d6ca8:24)
+
+Change-Id: Idb7a036c469c9b987f5d23669b9892b786dd1c3a
+Signed-off-by: Dmitrii <bankersenator@gmail.com>
+---
+ .../systemui/topwindoweffects/ui/compose/SqueezeEffect.kt  | 7 ++++---
+ 1 file changed, 4 insertions(+), 3 deletions(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/topwindoweffects/ui/compose/SqueezeEffect.kt b/packages/SystemUI/src/com/android/systemui/topwindoweffects/ui/compose/SqueezeEffect.kt
+index 9809b0592dcf..cb194fdce089 100644
+--- a/packages/SystemUI/src/com/android/systemui/topwindoweffects/ui/compose/SqueezeEffect.kt
++++ b/packages/SystemUI/src/com/android/systemui/topwindoweffects/ui/compose/SqueezeEffect.kt
+@@ -51,8 +51,9 @@ fun SqueezeEffect(
+     val down = viewModel.isPowerButtonPressed
+     val longPressed = viewModel.isPowerButtonLongPressed
+     // TODO: Choose the correct resource based on primary / secondary display
+-    val top = rememberVectorPainter(ImageVector.vectorResource(R.drawable.rounded_corner_top))
+-    val bottom = rememberVectorPainter(ImageVector.vectorResource(R.drawable.rounded_corner_bottom))
++    val corner = rememberVectorPainter(ImageVector.vectorResource(R.drawable.rounded))
++    val top = corner
++    val bottom = corner
+ 
+     val squeezeProgress by animateFloatAsState(
+         targetValue =
+@@ -136,4 +137,4 @@ private fun DrawScope.drawTransform(
+             draw(size = intrinsicSize)
+         }
+     }
+-}
+\ No newline at end of file
++}
+-- 
+2.51.0
+

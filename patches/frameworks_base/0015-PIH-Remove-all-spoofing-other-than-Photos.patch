@@ -1,7 +1,7 @@
-From e1baa24fc3b658b8f4ee2f7cc663efd93e37d3a6 Mon Sep 17 00:00:00 2001
+From 6f9ddde9b5ae53c9862e47fff25960fb4956a4a6 Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Wed, 18 Jun 2025 19:30:24 +0530
-Subject: [PATCH 15/15] PIH: Remove all spoofing other than Photos
+Subject: [PATCH 15/19] PIH: Remove all spoofing other than Photos
 
 Change-Id: I95c4bc3fef70f4e54f0ca89e21107cd438e29d73
 ---
@@ -374,5 +374,5 @@ index 1a499e15cb4a..fac92ee319f2 100644
      }
  
 -- 
-2.50.0
+2.51.0
 

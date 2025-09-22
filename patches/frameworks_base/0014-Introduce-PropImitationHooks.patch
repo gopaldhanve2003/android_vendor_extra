@@ -1,7 +1,7 @@
-From 0572ad5f568b4739dc6436469458ba018621a576 Mon Sep 17 00:00:00 2001
+From 2287191081e858489168128c7919ceffc6415ce2 Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Fri, 28 Mar 2025 09:54:27 +0545
-Subject: [PATCH 14/15] Introduce PropImitationHooks
+Subject: [PATCH 14/19] Introduce PropImitationHooks
 
 Squashed commit of the following:
 
@@ -290,7 +290,7 @@ Change-Id: Ib0be154cb27e5c67233564278727a0b093ab1cac
  create mode 100644 core/res/res/values/custom_symbols.xml
 
 diff --git a/core/java/android/app/ApplicationPackageManager.java b/core/java/android/app/ApplicationPackageManager.java
-index 8da6f8605ca4..79ae3cd5ba89 100644
+index 74bd95cda337..ba05db7a79c1 100644
 --- a/core/java/android/app/ApplicationPackageManager.java
 +++ b/core/java/android/app/ApplicationPackageManager.java
 @@ -133,6 +133,7 @@ import com.android.internal.annotations.GuardedBy;
@@ -850,5 +850,5 @@ index fac92ee319f2..1a499e15cb4a 100644
      }
  
 -- 
-2.50.0
+2.51.0
 
