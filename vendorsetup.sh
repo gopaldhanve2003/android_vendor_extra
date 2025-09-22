@@ -51,7 +51,12 @@ release() {
         sf_project_name="garnetrandom"
         extraimages="dtboimage recoveryimage vendorbootimage" 
     fi
-    
+
+    if [[ "${device}" == "peridot" ]]; then
+        sf_project_name="peridotrandom"
+        extraimages="bootimage dtboimage initbootimage recoveryimage vendorbootimage" 
+    fi
+
     if [[ "${device}" == "zircon" ]]; then
         sf_project_name="zirconrandom"
         extraimages="initbootimage vendorbootimage" 
@@ -191,6 +196,7 @@ release() {
     rsync -Ph ${OUT}/${filename}.sha256sum adarshgrewal@frs.sourceforge.net:/home/frs/project/${sf_project_name}/los/"${tag_name}"/
 
     declare -A image_map=(
+        ["bootimage"]="${OUT}/boot.img"
         ["dtboimage"]="${OUT}/dtbo.img"
         ["initbootimage"]="${OUT}/init_boot.img"
         ["vendorbootimage"]="${OUT}/vendor_boot.img"
