@@ -265,7 +265,7 @@ apply_patches() {
         cd ${ANDROID_BUILD_TOP}
         cd ${project_path}
         HEAD_COMMIT=$(git rev-parse HEAD)
-        LINEAGE_COMMIT=$(git rev-parse m/lineage-22.2)
+        LINEAGE_COMMIT=$(git rev-parse m/lineage-23.0)
         if [[ "${HEAD_COMMIT}" == "${LINEAGE_COMMIT}" ]]; then
             echo "Applying patches for project: ${project_name} on ${HEAD_COMMIT}"
             if ! git am "${PATCHES_PATH}"/${project_name}/*.patch --no-gpg-sign; then
@@ -273,7 +273,7 @@ apply_patches() {
                 git am --abort &> /dev/null
             fi
         else
-            echo "Skipping project: ${project_name}, HEAD is not on m/lineage-22.2."
+            echo "Skipping project: ${project_name}, HEAD is not on m/lineage-23.0."
         fi
         cd ${ANDROID_BUILD_TOP}
     done
