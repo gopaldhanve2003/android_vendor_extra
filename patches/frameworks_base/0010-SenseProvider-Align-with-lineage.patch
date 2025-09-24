@@ -1,4 +1,4 @@
-From 5ce88a4fbe168c94f918c92acf85fc8fc6e54efa Mon Sep 17 00:00:00 2001
+From 96d5528285b9252be03ad25afa0f0a2781dd6d96 Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Wed, 20 Nov 2024 11:41:06 +0530
 Subject: [PATCH 10/19] SenseProvider: Align with lineage

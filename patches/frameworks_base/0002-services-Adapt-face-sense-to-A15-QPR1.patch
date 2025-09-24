@@ -1,4 +1,4 @@
-From 0d7b4a55c305de6d65db7c2790569f1654ae2ce1 Mon Sep 17 00:00:00 2001
+From c19fd32ec6cc7ce88715ae8981e5d889b1914f50 Mon Sep 17 00:00:00 2001
 From: COSMIC <rayavanindra@gmail.com>
 Date: Fri, 13 Dec 2024 13:38:26 +0530
 Subject: [PATCH 02/19] services: Adapt face sense to A15-QPR1

@@ -1,7 +1,7 @@
-From 6bafa24ae9931fa9b63682c12e60328e5affe89c Mon Sep 17 00:00:00 2001
+From 70c513b0278247229feb28696a6945879da9c706 Mon Sep 17 00:00:00 2001
 From: John Galt <johngaltfirstrun@gmail.com>
 Date: Tue, 8 Jul 2025 16:33:09 -0400
-Subject: [PATCH 19/19] [HACK:] Revert "Fix notification row transparency."
+Subject: [PATCH 18/19] Revert "Fix notification row transparency."
 
 This reverts commit 23c7418d4d96448ba76d08690df7209b9743c2dd.
 

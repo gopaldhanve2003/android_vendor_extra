@@ -1,7 +1,7 @@
-From 91b872549c5dc74dc5e5fc976f9351de503f0fd1 Mon Sep 17 00:00:00 2001
+From dd0865e1aa90a5ff5d49689607870855f087c22f Mon Sep 17 00:00:00 2001
 From: rmp22 <195054967+rmp22@users.noreply.github.com>
 Date: Wed, 2 Jul 2025 09:20:33 +0800
-Subject: [PATCH 18/19] reduce blur radius to avoid blur artifacts
+Subject: [PATCH 17/19] reduce blur radius to avoid blur artifacts
 
 60px on 411dp device
 

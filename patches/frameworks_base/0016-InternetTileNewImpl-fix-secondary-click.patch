@@ -1,7 +1,7 @@
-From fdf2cd8e5b8d8841484b48e06e7ac7bcc96446c3 Mon Sep 17 00:00:00 2001
+From 7b624eadfe70368bd93707d2c74603004ab88bc8 Mon Sep 17 00:00:00 2001
 From: rmp22 <195054967+rmp22@users.noreply.github.com>
 Date: Sat, 5 Jul 2025 10:17:41 +0800
-Subject: [PATCH 17/19] InternetTileNewImpl: fix secondary click
+Subject: [PATCH 16/19] InternetTileNewImpl: fix secondary click
 
 Change-Id: Ib9420f5fb7dd0f249c6703a60b151b78fd6a5c24
 ---
