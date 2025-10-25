@@ -1,0 +1,31 @@
+From 7d66476f6b04405c4c1c035575de8956b43bf1dc Mon Sep 17 00:00:00 2001
+From: Pranav Vashi <neobuddy89@gmail.com>
+Date: Fri, 30 Dec 2022 02:49:41 +0530
+Subject: [PATCH 16/28] Launcher3: Fix taskbar crash without QSB
+
+Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
+Signed-off-by: Mohammad Hasan Keramat J <ikeramat@protonmail.com>
+---
+ .../src/com/android/launcher3/taskbar/TaskbarView.java      | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
+
+diff --git a/quickstep/src/com/android/launcher3/taskbar/TaskbarView.java b/quickstep/src/com/android/launcher3/taskbar/TaskbarView.java
+index b2989cd81a..ed0bcc0a84 100644
+--- a/quickstep/src/com/android/launcher3/taskbar/TaskbarView.java
++++ b/quickstep/src/com/android/launcher3/taskbar/TaskbarView.java
+@@ -198,7 +198,11 @@ public class TaskbarView extends FrameLayout implements FolderIcon.FolderIconPar
+         }
+ 
+         // TODO: Disable touch events on QSB otherwise it can crash.
+-        mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
++        if (Utilities.showQSB(context)) {
++            mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
++        } else {
++            mQsb = LayoutInflater.from(context).inflate(R.layout.empty_view, this, false);
++        }
+     }
+ 
+     /**
+-- 
+2.51.1
+

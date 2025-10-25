@@ -1,0 +1,29 @@
+From 8bd47615f06d526cbe4c1fb00de7b449c0587fd8 Mon Sep 17 00:00:00 2001
+From: Abhay Singh Gill <abhaygill017@gmail.com>
+Date: Sun, 29 Dec 2024 04:09:01 +0530
+Subject: [PATCH 15/28] Launcher3: Add hotseat bar bottom space when taskbar is
+ enabled
+
+Else the icons touch the screen edges.
+
+Signed-off-by: Abhay Singh Gill <abhaygill017@gmail.com>
+---
+ src/com/android/launcher3/DeviceProfile.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/com/android/launcher3/DeviceProfile.java b/src/com/android/launcher3/DeviceProfile.java
+index 45f1656e8c..84dee79d66 100644
+--- a/src/com/android/launcher3/DeviceProfile.java
++++ b/src/com/android/launcher3/DeviceProfile.java
+@@ -663,7 +663,7 @@ public class DeviceProfile {
+         } else {
+             hotseatQsbSpace = Utilities.showQSB(context)
+                     ? pxFromDp(inv.hotseatQsbSpace[mTypeIndex], mMetrics) : 0;
+-            hotseatBarBottomSpace = Utilities.showQSB(context)
++            hotseatBarBottomSpace = (Utilities.showQSB(context) || isTaskbarPresent)
+                     ? pxFromDp(inv.hotseatBarBottomSpace[mTypeIndex], mMetrics) : 0;
+             mHotseatBarEdgePaddingPx =
+                     isVerticalBarLayout() ? workspacePageIndicatorHeight : 0;
+-- 
+2.51.1
+

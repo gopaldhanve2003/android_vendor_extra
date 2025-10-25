@@ -1,0 +1,33 @@
+From e3a9469317bc4c5f5b417dc9934355240a2b3f87 Mon Sep 17 00:00:00 2001
+From: nift4 <nift4@protonmail.com>
+Date: Thu, 13 Jul 2023 15:34:49 +0200
+Subject: [PATCH 23/28] Launcher3: fix crash
+
+Change-Id: I847cee50096a4e21c259e72bd19c87cf549852ed
+Signed-off-by: SahilSonar <sss.sonar2003@gmail.com>
+Signed-off-by: Saalim Quadri <danascape@gmail.com>
+---
+ src/com/android/launcher3/qsb/QsbContainerView.java | 7 +------
+ 1 file changed, 1 insertion(+), 6 deletions(-)
+
+diff --git a/src/com/android/launcher3/qsb/QsbContainerView.java b/src/com/android/launcher3/qsb/QsbContainerView.java
+index aca1fd9e55..bc28bdc71a 100644
+--- a/src/com/android/launcher3/qsb/QsbContainerView.java
++++ b/src/com/android/launcher3/qsb/QsbContainerView.java
+@@ -284,12 +284,7 @@ public class QsbContainerView extends FrameLayout {
+         }
+ 
+         private void rebindFragment() {
+-            // Exit if the embedded qsb is disabled
+-            if (!isQsbEnabled()) {
+-                return;
+-            }
+-
+-            if (mWrapper != null && getContext() != null) {
++            if (mWrapper != null && getContext() != null && isQsbEnabled()) {
+                 mWrapper.removeAllViews();
+                 mWrapper.addView(createQsb(mWrapper));
+             }
+-- 
+2.51.1
+

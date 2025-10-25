@@ -1,0 +1,29 @@
+From 71d209097cf96f8cd20e1157b725c5d3d03f0b54 Mon Sep 17 00:00:00 2001
+From: Adithya R <gh0strider.2k18.reborn@gmail.com>
+Date: Sat, 4 Nov 2023 17:41:39 +0530
+Subject: [PATCH 26/28] Launcher3: Set FLAG_ACTIVITY_CLEAR_TASK for lens
+ intents
+
+Keep recents clean.
+
+Change-Id: I0192444e920370d19483a94f02a6bb33d378997f
+---
+ src/com/android/launcher3/qsb/QsbLayout.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/com/android/launcher3/qsb/QsbLayout.java b/src/com/android/launcher3/qsb/QsbLayout.java
+index ab45a5e8e1..0bb50306c7 100644
+--- a/src/com/android/launcher3/qsb/QsbLayout.java
++++ b/src/com/android/launcher3/qsb/QsbLayout.java
+@@ -105,7 +105,7 @@ public class QsbLayout extends FrameLayout implements Reorderable,
+             bundle.putString("caller_package", Utilities.GSA_PACKAGE);
+             bundle.putLong("start_activity_time_nanos", SystemClock.elapsedRealtimeNanos());
+             lensIntent.setComponent(new ComponentName(Utilities.GSA_PACKAGE, Utilities.LENS_ACTIVITY))
+-                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
++                    .addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK)
+                     .setPackage(Utilities.GSA_PACKAGE)
+                     .setData(Uri.parse(Utilities.LENS_URI))
+                     .putExtra("lens_activity_params", bundle);
+-- 
+2.51.1
+

@@ -1,0 +1,116 @@
+From e16cd0a9c2f69ba8eb7942c240a57300e0447f75 Mon Sep 17 00:00:00 2001
+From: Abhay Singh Gill <abhaygill017@gmail.com>
+Date: Sat, 25 Mar 2023 01:56:22 +0700
+Subject: [PATCH 18/28] Launcher3: Properly calculate hotseat padding
+
+* After https://github.com/crdroidandroid/android_packages_apps_Launcher3/commit/f479736a28692e58aab0dbaa426adff1287df179 it makes absolutely zero sense to use different methods to calculate scalable/non-scalable grid padding as the scalable grid check to recalculate hotseat padding has been removed.
+* Account insets in hotseat padding when using inline QSB (Fixes padding for devices with cutouts)
+* Make sure RTL layout is fixed without using taskbar for inline QSB as well.
+
+Signed-off-by: Abhay Singh Gill <abhaygill017@gmail.com>
+---
+ src/com/android/launcher3/DeviceProfile.java | 71 ++++++++++----------
+ 1 file changed, 35 insertions(+), 36 deletions(-)
+
+diff --git a/src/com/android/launcher3/DeviceProfile.java b/src/com/android/launcher3/DeviceProfile.java
+index 84dee79d66..d9abb9c4b8 100644
+--- a/src/com/android/launcher3/DeviceProfile.java
++++ b/src/com/android/launcher3/DeviceProfile.java
+@@ -1932,6 +1932,9 @@ public class DeviceProfile {
+         boolean isTaskbarPresent = this.isTaskbarPresent &&
+                 SettingsCache.INSTANCE.get(context).getValue(ENABLE_TASKBAR, 1);
+         Rect hotseatBarPadding = new Rect();
++        int iconExtraSpacePx = iconSizePx - getIconVisibleSizePx(iconSizePx);
++        int hotseatWidth = getHotseatRequiredWidth();
++        boolean isRtl = Utilities.isRtl(context.getResources());
+         if (isVerticalBarLayout()) {
+             // The hotseat icons will be placed in the middle of the hotseat cells.
+             // Changing the hotseatCellHeightPx is not affecting hotseat icon positions
+@@ -1974,52 +1977,48 @@ public class DeviceProfile {
+             int hotseatBarTopPadding =
+                     hotseatBarSizePx - hotseatBarBottomPadding - hotseatCellHeightPx;
+ 
+-            int hotseatWidth = getHotseatRequiredWidth();
+-            int startSpacing;
+-            int endSpacing;
+             // Hotseat aligns to the left with nav buttons
+             if (hotseatBarEndOffset > 0) {
+-                startSpacing = inlineNavButtonsEndSpacingPx;
+-                endSpacing = availableWidthPx - hotseatWidth - startSpacing + hotseatBorderSpace;
++                int startSpacing = inlineNavButtonsEndSpacingPx;
++                int endSpacing = availableWidthPx - hotseatWidth - startSpacing + hotseatBorderSpace;
++
++                startSpacing += getAdditionalQsbSpace();
++
++                if (isRtl) {
++                    hotseatBarPadding.left = endSpacing;
++                    hotseatBarPadding.right = startSpacing;
++                } else {
++                    hotseatBarPadding.left = startSpacing;
++                    hotseatBarPadding.right = endSpacing;
++                }
+             } else {
+-                startSpacing = (availableWidthPx - hotseatWidth) / 2;
+-                endSpacing = startSpacing;
++                int sideSpacing = isQsbInline ? (availableWidthPx - hotseatWidth) / 2 : 
++                        (availableWidthPx - (hotseatQsbWidth + iconExtraSpacePx)) / 2;
++                if (isRtl) {
++                    hotseatBarPadding.left = sideSpacing + mInsets.left;
++                    hotseatBarPadding.right = sideSpacing + getAdditionalQsbSpace() + mInsets.right;
++                } else {
++                    hotseatBarPadding.left = sideSpacing + getAdditionalQsbSpace() + mInsets.left;
++                    hotseatBarPadding.right = sideSpacing + mInsets.right;
++                }
+             }
+-            startSpacing += getAdditionalQsbSpace();
+ 
+             hotseatBarPadding.top = hotseatBarTopPadding;
+             hotseatBarPadding.bottom = hotseatBarBottomPadding;
+-            boolean isRtl = Utilities.isRtl(context.getResources());
++        } else {
++            int sideSpacing = isQsbInline ? (availableWidthPx - hotseatWidth) / 2 : 
++                            (availableWidthPx - (hotseatQsbWidth + iconExtraSpacePx)) / 2;
+             if (isRtl) {
+-                hotseatBarPadding.left = endSpacing;
+-                hotseatBarPadding.right = startSpacing;
++                hotseatBarPadding.set(sideSpacing + mInsets.left,
++                        0,
++                        sideSpacing + getAdditionalQsbSpace() + mInsets.right,
++                        getHotseatBarBottomPadding());
+             } else {
+-                hotseatBarPadding.left = startSpacing;
+-                hotseatBarPadding.right = endSpacing;
++                hotseatBarPadding.set(sideSpacing + getAdditionalQsbSpace() + mInsets.left,
++                        0,
++                        sideSpacing + mInsets.right,
++                        getHotseatBarBottomPadding());
+             }
+-
+-        } else if (mIsScalableGrid) {
+-            int iconExtraSpacePx = iconSizePx - getIconVisibleSizePx(iconSizePx);
+-            int sideSpacing = (availableWidthPx - (hotseatQsbWidth + iconExtraSpacePx)) / 2;
+-            hotseatBarPadding.set(sideSpacing,
+-                    0,
+-                    sideSpacing,
+-                    getHotseatBarBottomPadding());
+-        } else {
+-            // We want the edges of the hotseat to line up with the edges of the workspace, but the
+-            // icons in the hotseat are a different size, and so don't line up perfectly. To account
+-            // for this, we pad the left and right of the hotseat with half of the difference of a
+-            // workspace cell vs a hotseat cell.
+-            float workspaceCellWidth = (float) widthPx / inv.numColumns;
+-            float hotseatCellWidth = (float) widthPx / numShownHotseatIcons;
+-            int hotseatAdjustment = Math.round((workspaceCellWidth - hotseatCellWidth) / 2);
+-            hotseatBarPadding.set(
+-                    hotseatAdjustment + workspacePadding.left + cellLayoutPaddingPx.left
+-                            + mInsets.left,
+-                    0,
+-                    hotseatAdjustment + workspacePadding.right + cellLayoutPaddingPx.right
+-                            + mInsets.right,
+-                    getHotseatBarBottomPadding());
+         }
+         return hotseatBarPadding;
+     }
+-- 
+2.51.1
+

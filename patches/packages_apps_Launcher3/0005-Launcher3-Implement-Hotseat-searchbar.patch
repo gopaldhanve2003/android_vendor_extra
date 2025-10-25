@@ -1,0 +1,553 @@
+From 8e5f9944f12819d3c1dcc7272cde9893c8a31c9d Mon Sep 17 00:00:00 2001
+From: Suphon Thanakornpakapong <paphonb@gmail.com>
+Date: Wed, 2 Feb 2022 17:03:39 +0530
+Subject: [PATCH 05/28] Launcher3: Implement Hotseat searchbar
+
+[Maitreya29: Rewrite QsbLayout and AssistantIconView in java and dynamically color the searchbar]
+
+neobuddy89: Updated for Android 12L
+
+Co-authored-by: Maitreya29 <maitreyapatni30@gmail.com>
+Change-Id: I885e21ec8d7b8a6377cb228ff0099b0decfade02
+Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
+---
+ res/color/hotseat_qsb_bg_color.xml            |  4 +
+ res/drawable/bg_google_qsb.xml                | 21 +++++
+ res/drawable/ic_lens_color.xml                | 23 ++++++
+ res/drawable/ic_mic_color.xml                 | 20 +++++
+ res/drawable/ic_super_g_color.xml             | 20 +++++
+ res/layout/empty_view.xml                     | 17 ++++
+ res/layout/search_container_hotseat.xml       | 62 ++++++++++----
+ res/values-night-v31/colors.xml               |  6 +-
+ res/values/attrs.xml                          |  6 ++
+ res/values/dimens.xml                         | 10 ++-
+ res/values/extra_colors.xml                   |  7 ++
+ res/values/extra_strings.xml                  |  7 ++
+ res/values/styles.xml                         | 59 ++++++++++++--
+ .../launcher3/qsb/AssistantIconView.java      | 35 ++++++++
+ src/com/android/launcher3/qsb/QsbLayout.java  | 80 +++++++++++++++++++
+ 15 files changed, 353 insertions(+), 24 deletions(-)
+ create mode 100644 res/color/hotseat_qsb_bg_color.xml
+ create mode 100644 res/drawable/bg_google_qsb.xml
+ create mode 100644 res/drawable/ic_lens_color.xml
+ create mode 100644 res/drawable/ic_mic_color.xml
+ create mode 100644 res/drawable/ic_super_g_color.xml
+ create mode 100644 res/layout/empty_view.xml
+ create mode 100644 res/values/extra_colors.xml
+ create mode 100644 res/values/extra_strings.xml
+ create mode 100644 src/com/android/launcher3/qsb/AssistantIconView.java
+ create mode 100644 src/com/android/launcher3/qsb/QsbLayout.java
+
+diff --git a/res/color/hotseat_qsb_bg_color.xml b/res/color/hotseat_qsb_bg_color.xml
+new file mode 100644
+index 0000000000..fabd17f0d2
+--- /dev/null
++++ b/res/color/hotseat_qsb_bg_color.xml
+@@ -0,0 +1,4 @@
++<?xml version="1.0" encoding="utf-8"?>
++<selector xmlns:android="http://schemas.android.com/apk/res/android">
++    <item android:alpha="1.0" android:color="?qsbFillColor" />
++</selector>
+\ No newline at end of file
+diff --git a/res/drawable/bg_google_qsb.xml b/res/drawable/bg_google_qsb.xml
+new file mode 100644
+index 0000000000..0d9ac10117
+--- /dev/null
++++ b/res/drawable/bg_google_qsb.xml
+@@ -0,0 +1,21 @@
++<?xml version="1.0" encoding="utf-8"?>
++<ripple xmlns:android="http://schemas.android.com/apk/res/android"
++    android:color="?android:colorControlHighlight">
++    <item
++        android:id="@android:id/mask"
++        android:bottom="@dimen/qsb_shadow_margin"
++        android:top="@dimen/qsb_shadow_margin">
++        <shape android:shape="rectangle">
++            <corners android:radius="@dimen/qsb_widget_height" />
++            <solid android:color="#ffffffff" />
++        </shape>
++    </item>
++    <item
++        android:bottom="@dimen/qsb_shadow_margin"
++        android:top="@dimen/qsb_shadow_margin">
++        <shape android:shape="rectangle">
++            <corners android:radius="@dimen/qsb_widget_height" />
++            <solid android:color="#ffffffff" />
++        </shape>
++    </item>
++</ripple>
+\ No newline at end of file
+diff --git a/res/drawable/ic_lens_color.xml b/res/drawable/ic_lens_color.xml
+new file mode 100644
+index 0000000000..d3c2c8c27f
+--- /dev/null
++++ b/res/drawable/ic_lens_color.xml
+@@ -0,0 +1,23 @@
++<?xml version="1.0" encoding="utf-8"?>
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="32.0dip"
++    android:height="32.0dip"
++    android:theme="@style/QsbIconTint"
++    android:viewportWidth="192.0"
++    android:viewportHeight="192.0">
++    <path
++        android:fillColor="?qsbIconTintTertiary"
++        android:pathData="M128,40c13.28,0 24,10.72 24,24v16h16V64c0,-22.08 -17.92,-40 -40,-40h-16v16H128z" />
++    <path
++        android:fillColor="?qsbIconTintPrimary"
++        android:pathData="M64,152c-13.28,0 -24,-10.72 -24,-24v-16H24v16c0,22.08 17.92,40 40,40h16v-16H64z" />
++    <path
++        android:fillColor="?qsbIconTintPrimary"
++        android:pathData="M96,96m-28,0a28,28 0,1 1,56 0a28,28 0,1 1,-56 0" />
++    <path
++        android:fillColor="?qsbIconTintSecondary"
++        android:pathData="M144,144m-16,0a16,16 0,1 1,32 0a16,16 0,1 1,-32 0" />
++    <path
++        android:fillColor="?qsbIconTintQuaternary"
++        android:pathData="M64,40c-13.28,0 -24,10.72 -24,24v16H24V64c0,-22.08 17.92,-40 40,-40h16v16H64z" />
++</vector>
+\ No newline at end of file
+diff --git a/res/drawable/ic_mic_color.xml b/res/drawable/ic_mic_color.xml
+new file mode 100644
+index 0000000000..fca8d2d04f
+--- /dev/null
++++ b/res/drawable/ic_mic_color.xml
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="utf-8"?>
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="30.0dip"
++    android:height="30.0dip"
++    android:theme="@style/QsbIconTint"
++    android:viewportWidth="24.0"
++    android:viewportHeight="24.0">
++    <path
++        android:fillColor="?qsbIconTintPrimary"
++        android:pathData="M12,15c1.66,0 2.99,-1.34 2.99,-3L15,5c0,-1.66 -1.34,-3 -3,-3S9,3.34 9,5v7c0,1.66 1.34,3 3,3z" />
++    <path
++        android:fillColor="?qsbIconTintSecondary"
++        android:pathData="M11,18.92h2V22h-2z" />
++    <path
++        android:fillColor="?qsbIconTintTertiary"
++        android:pathData="M7,12H5c0,1.93 0.78,3.68 2.05,4.95l1.41,-1.41C7.56,14.63 7,13.38 7,12z" />
++    <path
++        android:fillColor="?qsbIconTintQuaternary"
++        android:pathData="M12,17c-1.38,0 -2.63,-0.56 -3.54,-1.47l-1.41,1.41C8.32,18.21 10.07,19 12.01,19c3.87,0 6.98,-3.14 6.98,-7h-2c0,2.76 -2.23,5 -4.99,5z" />
++</vector>
+\ No newline at end of file
+diff --git a/res/drawable/ic_super_g_color.xml b/res/drawable/ic_super_g_color.xml
+new file mode 100644
+index 0000000000..5a93649d4a
+--- /dev/null
++++ b/res/drawable/ic_super_g_color.xml
+@@ -0,0 +1,20 @@
++<?xml version="1.0" encoding="utf-8"?>
++<vector xmlns:android="http://schemas.android.com/apk/res/android"
++    android:width="24.0dip"
++    android:height="24.0dip"
++    android:theme="@style/QsbIconTint"
++    android:viewportWidth="24.0"
++    android:viewportHeight="24.0">
++    <path
++        android:fillColor="?qsbIconTintPrimary"
++        android:pathData="M23.49,12.27c0,-0.79 -0.07,-1.54 -0.19,-2.27H12v4.51h6.47c-0.29,1.48 -1.14,2.73 -2.4,3.58v3h3.86c2.26,-2.09 3.56,-5.17 3.56,-8.82z" />
++    <path
++        android:fillColor="?qsbIconTintSecondary"
++        android:pathData="M12,24c3.24,0 5.95,-1.08 7.93,-2.91l-3.86,-3c-1.08,0.72 -2.45,1.16 -4.07,1.16 -3.13,0 -5.78,-2.11 -6.73,-4.96H1.29v3.09C3.26,21.3 7.31,24 12,24z" />
++    <path
++        android:fillColor="?qsbIconTintTertiary"
++        android:pathData="M5.27,14.29c-0.25,-0.72 -0.38,-1.49 -0.38,-2.29s0.14,-1.57 0.38,-2.29V6.62H1.29C0.47,8.24 0,10.06 0,12s0.47,3.76 1.29,5.38l3.98,-3.09z" />
++    <path
++        android:fillColor="?qsbIconTintQuaternary"
++        android:pathData="M12,4.75c1.77,0 3.35,0.61 4.6,1.8l3.42,-3.42C17.95,1.19 15.24,0 12,0 7.31,0 3.26,2.7 1.29,6.62l3.98,3.09c0.95,-2.85 3.6,-4.96 6.73,-4.96z" />
++</vector>
+\ No newline at end of file
+diff --git a/res/layout/empty_view.xml b/res/layout/empty_view.xml
+new file mode 100644
+index 0000000000..dbfe288d70
+--- /dev/null
++++ b/res/layout/empty_view.xml
+@@ -0,0 +1,17 @@
++<?xml version="1.0" encoding="utf-8"?>
++<!--
++     Copyright (C) 2021 The Android Open Source Project
++     Licensed under the Apache License, Version 2.0 (the "License");
++     you may not use this file except in compliance with the License.
++     You may obtain a copy of the License at
++          http://www.apache.org/licenses/LICENSE-2.0
++     Unless required by applicable law or agreed to in writing, software
++     distributed under the License is distributed on an "AS IS" BASIS,
++     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
++     See the License for the specific language governing permissions and
++     limitations under the License.
++-->
++<View
++    xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="match_parent"
++    android:layout_height="0dp" />
+\ No newline at end of file
+diff --git a/res/layout/search_container_hotseat.xml b/res/layout/search_container_hotseat.xml
+index 8f12ca07b0..8941a99522 100644
+--- a/res/layout/search_container_hotseat.xml
++++ b/res/layout/search_container_hotseat.xml
+@@ -1,20 +1,50 @@
+ <?xml version="1.0" encoding="utf-8"?>
+-<!--
+-     Copyright (C) 2021 The Android Open Source Project
++<com.android.launcher3.qsb.QsbLayout xmlns:android="http://schemas.android.com/apk/res/android"
++    android:layout_width="fill_parent"
++    android:layout_height="@dimen/qsb_widget_height"
++    android:layout_alignParentTop="true"
++    android:layout_centerHorizontal="true"
++    android:layout_gravity="center|top"
++    android:background="@drawable/bg_google_qsb"
++    android:backgroundTint="@color/hotseat_qsb_bg_color"
++    android:contentDescription="@string/label_search">
+ 
+-     Licensed under the Apache License, Version 2.0 (the "License");
+-     you may not use this file except in compliance with the License.
+-     You may obtain a copy of the License at
++    <ImageView
++        android:id="@+id/g_icon"
++        android:layout_width="wrap_content"
++        android:layout_height="wrap_content"
++        android:layout_gravity="start|center"
++        android:layout_marginStart="@dimen/qsb_g_icon_marginStart"
++        android:src="@drawable/ic_super_g_color" />
+ 
+-          http://www.apache.org/licenses/LICENSE-2.0
++    <LinearLayout
++        android:layout_width="wrap_content"
++        android:layout_height="fill_parent"
++        android:layout_gravity="end|center"
++        android:layout_marginTop="-6.0dip"
++        android:layout_marginBottom="-6.0dip"
++        android:orientation="horizontal">
+ 
+-     Unless required by applicable law or agreed to in writing, software
+-     distributed under the License is distributed on an "AS IS" BASIS,
+-     WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-     See the License for the specific language governing permissions and
+-     limitations under the License.
+--->
+-<View
+-    xmlns:android="http://schemas.android.com/apk/res/android"
+-    android:layout_width="match_parent"
+-    android:layout_height="0dp" />
+\ No newline at end of file
++        <com.android.launcher3.qsb.AssistantIconView
++            android:id="@+id/mic_icon"
++            android:layout_width="@dimen/qsb_mic_width"
++            android:layout_height="fill_parent"
++            android:background="?android:selectableItemBackgroundBorderless"
++            android:clickable="true"
++            android:contentDescription="@string/label_voice_search"
++            android:focusable="false" />
++
++        <ImageButton
++            android:id="@+id/lens_icon"
++            android:layout_width="@dimen/qsb_lens_width"
++            android:layout_height="fill_parent"
++            android:layout_marginEnd="@dimen/qsb_lens_marginEnd"
++            android:background="?android:selectableItemBackgroundBorderless"
++            android:clickable="true"
++            android:contentDescription="@string/label_lens"
++            android:focusable="false"
++            android:padding="@dimen/qsb_lens_padding"
++            android:scaleType="fitCenter"
++            android:visibility="gone" />
++    </LinearLayout>
++</com.android.launcher3.qsb.QsbLayout>
+\ No newline at end of file
+diff --git a/res/values-night-v31/colors.xml b/res/values-night-v31/colors.xml
+index 4a6340add7..6cd32ac01a 100644
+--- a/res/values-night-v31/colors.xml
++++ b/res/values-night-v31/colors.xml
+@@ -54,4 +54,8 @@
+         @android:color/system_accent1_800</color>
+ 
+     <color name="material_color_on_surface">@android:color/system_neutral1_100</color>
+-</resources>
+\ No newline at end of file
++    <color name="qsb_primary">@*android:color/system_accent3_100</color>
++    <color name="qsb_secondary">@*android:color/system_accent1_300</color>
++    <color name="qsb_tertiary">@*android:color/system_accent2_500</color>
++    <color name="qsb_quaternary">@*android:color/system_accent1_100</color>
++</resources>
+diff --git a/res/values/attrs.xml b/res/values/attrs.xml
+index 4ecd2f9d71..99b4d17b73 100644
+--- a/res/values/attrs.xml
++++ b/res/values/attrs.xml
+@@ -86,6 +86,12 @@
+     <attr name="widgetCellTitleColor" format="color" />
+     <attr name="widgetCellSubtitleColor" format="color" />
+ 
++    <attr name="qsbFillColor" format="color" />
++    <attr name="qsbIconTintPrimary" format="color" />
++    <attr name="qsbIconTintQuaternary" format="color" />
++    <attr name="qsbIconTintSecondary" format="color" />
++    <attr name="qsbIconTintTertiary" format="color" />
++
+     <!-- BubbleTextView specific attributes. -->
+     <declare-styleable name="BubbleTextView">
+         <attr name="layoutHorizontal" format="boolean" />
+diff --git a/res/values/dimens.xml b/res/values/dimens.xml
+index d5e0b1074f..e23f266dc3 100644
+--- a/res/values/dimens.xml
++++ b/res/values/dimens.xml
+@@ -40,6 +40,15 @@
+ 
+     <dimen name="dynamic_grid_hotseat_side_padding">0dp</dimen>
+ 
++    <dimen name="qsb_g_icon_marginStart">16dp</dimen>
++    <dimen name="qsb_lens_marginEnd">4dp</dimen>
++    <dimen name="qsb_lens_padding">8dp</dimen>
++    <dimen name="qsb_lens_width">48dp</dimen>
++    <dimen name="qsb_mic_width">54dp</dimen>
++    <dimen name="qsb_min_width_with_mic">124dp</dimen>
++    <dimen name="qsb_shadow_margin">6dp</dimen>
++    <dimen name="qsb_widget_height">64dp</dimen>
++
+     <!-- Scalable Grid -->
+     <dimen name="min_qsb_margin">8dp</dimen>
+ 
+@@ -447,7 +456,6 @@
+         @*android:dimen/rounded_corner_content_padding
+     </dimen>
+     <dimen name="taskbar_stashed_size">0dp</dimen>
+-    <dimen name="qsb_widget_height">0dp</dimen>
+     <dimen name="qsb_shadow_height">0dp</dimen>
+     <dimen name="min_hotseat_icon_space">18dp</dimen>
+     <dimen name="max_hotseat_icon_space">50dp</dimen>
+diff --git a/res/values/extra_colors.xml b/res/values/extra_colors.xml
+new file mode 100644
+index 0000000000..31bb5429cc
+--- /dev/null
++++ b/res/values/extra_colors.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources>
++    <color name="qsb_primary">@*android:color/system_accent3_500</color>
++    <color name="qsb_secondary">@*android:color/system_neutral1_800</color>
++    <color name="qsb_tertiary">@*android:color/system_neutral1_500</color>
++    <color name="qsb_quaternary">@*android:color/system_neutral1_800</color>
++</resources>
+diff --git a/res/values/extra_strings.xml b/res/values/extra_strings.xml
+new file mode 100644
+index 0000000000..0800bc04c2
+--- /dev/null
++++ b/res/values/extra_strings.xml
+@@ -0,0 +1,7 @@
++<?xml version="1.0" encoding="utf-8"?>
++<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
++    <!-- Hotseat searchbar -->
++    <string name="label_search">Search</string>
++    <string name="label_lens">Google Lens</string>
++    <string name="label_voice_search">Voice search</string>
++</resources>
+diff --git a/res/values/styles.xml b/res/values/styles.xml
+index 9f30441044..c9bf75615f 100644
+--- a/res/values/styles.xml
++++ b/res/values/styles.xml
+@@ -165,13 +165,52 @@
+ 
+     <!-- A derivative project can extend these themes to customize the application theme without
+          affecting the base theme -->
+-    <style name="AppTheme" parent="@style/LauncherTheme" />
+-    <style name="AppTheme.DarkMainColor" parent="@style/LauncherTheme.DarkMainColor" />
+-    <style name="AppTheme.DarkText" parent="@style/LauncherTheme.DarkText" />
++    <style name="AppTheme" parent="@style/LauncherTheme">
++        <item name="qsbFillColor">@*android:color/background_device_default_light</item>
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
++
++    <style name="AppTheme.DarkMainColor" parent="@style/LauncherTheme.DarkMainColor">
++        <item name="qsbFillColor">@*android:color/background_device_default_light</item>
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
++
++    <style name="AppTheme.DarkText" parent="@style/LauncherTheme.DarkText">
++        <item name="qsbFillColor">@*android:color/background_device_default_light</item>
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
++
++    <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark">
++        <item name="qsbFillColor">@*android:color/background_device_default_dark</item>
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
+ 
+-    <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark" />
+-    <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor" />
+-    <style name="AppTheme.Dark.DarkText" parent="@style/LauncherTheme.Dark.DarkText" />
++    <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor">
++        <item name="qsbFillColor">@*android:color/background_device_default_dark</item>
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
++    <style name="AppTheme.Dark.DarkText" parent="@style/LauncherTheme.Dark.DarkText">
++        <item name="qsbFillColor">@*android:color/background_device_default_dark</item>
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
+ 
+     <style name="HomeSettings.Theme" parent="@android:style/Theme.DeviceDefault.Settings">
+         <item name="android:navigationBarColor">?android:colorPrimaryDark</item>
+@@ -529,4 +568,12 @@
+         <item name="android:fontFamily">google-sans-text-medium</item>
+         <item name="android:ellipsize">end</item>
+     </style>
++
++    <style name="QsbIconTint">
++        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
++        <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
++        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
++        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
++    </style>
++
+ </resources>
+diff --git a/src/com/android/launcher3/qsb/AssistantIconView.java b/src/com/android/launcher3/qsb/AssistantIconView.java
+new file mode 100644
+index 0000000000..2513112222
+--- /dev/null
++++ b/src/com/android/launcher3/qsb/AssistantIconView.java
+@@ -0,0 +1,35 @@
++package com.android.launcher3.qsb;
++
++import android.annotation.SuppressLint;
++import android.content.Context;
++import android.content.Intent;
++import android.util.AttributeSet;
++import android.widget.ImageView;
++import com.android.launcher3.R;
++import com.android.launcher3.qsb.QsbContainerView;
++
++public class AssistantIconView extends ImageView {
++
++    public AssistantIconView(Context context, AttributeSet attrs) {
++        super(context, attrs);
++        setScaleType(ScaleType.CENTER);
++        setOnClickListener(view -> {
++            Intent intent = new Intent(Intent.ACTION_VOICE_COMMAND).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).setPackage(QsbContainerView.getSearchWidgetPackageName(context));
++            context.startActivity(intent);
++        });
++    }
++
++    public void setIcon() {
++        setImageResource(R.drawable.ic_mic_color);
++    }
++
++    public AssistantIconView(Context context, AttributeSet attrs, int defStyle) {
++        super(context, attrs, defStyle);
++        setScaleType(ScaleType.CENTER);
++        setOnClickListener(view -> {
++            Intent intent = new Intent(Intent.ACTION_VOICE_COMMAND).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).setPackage(QsbContainerView.getSearchWidgetPackageName(context));
++            context.startActivity(intent);
++        });
++    }
++
++}
+\ No newline at end of file
+diff --git a/src/com/android/launcher3/qsb/QsbLayout.java b/src/com/android/launcher3/qsb/QsbLayout.java
+new file mode 100644
+index 0000000000..c073d17ba7
+--- /dev/null
++++ b/src/com/android/launcher3/qsb/QsbLayout.java
+@@ -0,0 +1,80 @@
++package com.android.launcher3.qsb;
++
++import android.content.ComponentName;
++import android.content.Context;
++import android.content.Intent;
++import android.util.AttributeSet;
++import android.widget.FrameLayout;
++import android.widget.ImageButton;
++import androidx.core.view.ViewCompat;
++import com.android.launcher3.BaseActivity;
++import com.android.launcher3.DeviceProfile;
++import com.android.launcher3.R;
++import com.android.launcher3.qsb.QsbContainerView;
++import com.android.launcher3.views.ActivityContext;
++import android.view.View;
++
++public class QsbLayout extends FrameLayout {
++
++    ImageButton lensIcon;
++    AssistantIconView assistantIcon;
++    Context mContext;
++
++    public QsbLayout(Context context, AttributeSet attrs) {
++        super(context, attrs);
++        mContext = context;
++    }
++
++    public QsbLayout(Context context, AttributeSet attrs, int defStyle) {
++        super(context, attrs, defStyle);
++        mContext = context;
++    }
++    @Override
++    protected void onFinishInflate() {
++        super.onFinishInflate();
++        assistantIcon = findViewById(R.id.mic_icon);
++        assistantIcon.setIcon();
++        lensIcon = findViewById(R.id.lens_icon);
++        String searchPackage = QsbContainerView.getSearchWidgetPackageName(mContext);
++        setOnClickListener(view -> {
++            mContext.startActivity(new Intent("android.search.action.GLOBAL_SEARCH").addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK).setPackage(searchPackage));
++        });
++        if (searchPackage == "com.google.android.googlequicksearchbox") {
++            setupLensIcon();
++        }
++    }
++
++    @Override
++    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
++        int requestedWidth = MeasureSpec.getSize(widthMeasureSpec);
++        int height = MeasureSpec.getSize(heightMeasureSpec);
++
++        DeviceProfile dp = ActivityContext.lookupContext(mContext).getDeviceProfile();
++        int cellWidth = DeviceProfile.calculateCellWidth(requestedWidth, dp.cellLayoutBorderSpacePx.x, dp.numShownHotseatIcons);
++        int iconSize = (int)(Math.round((dp.iconSizePx * 0.92f)));
++        int width = requestedWidth - (cellWidth - iconSize);
++        setMeasuredDimension(width, height);
++
++        for (int i = 0; i < getChildCount(); i++) {
++            final View child = getChildAt(i);
++            if (child != null) {
++                measureChildWithMargins(child, widthMeasureSpec, 0, heightMeasureSpec, 0);
++            }
++        }
++
++    }
++
++    private void setupLensIcon() {
++        Intent lensIntent = Intent.makeMainActivity(new ComponentName("com.google.ar.lens", "com.google.vr.apps.ornament.app.lens.LensLauncherActivity")).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_RESET_TASK_IF_NEEDED);
++        if (getContext().getPackageManager().resolveActivity(lensIntent, 0) == null){
++            return;
++        }
++        lensIcon.setVisibility(View.VISIBLE);
++        lensIcon.setImageResource(R.drawable.ic_lens_color);
++
++        lensIcon.setOnClickListener(view -> {
++            mContext.startActivity(lensIntent);
++        });
++    }
++
++}
+-- 
+2.51.1
+
