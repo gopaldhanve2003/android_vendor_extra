@@ -1,7 +1,7 @@
-From 35f73ff0e6adfc9e972b2841c700dc0e9e41ae05 Mon Sep 17 00:00:00 2001
+From c1664d480f3f63f2ddb656bdeb4cb324c3a29a20 Mon Sep 17 00:00:00 2001
 From: Chris Crump <chriscrawford893@gmail.com>
 Date: Tue, 25 Mar 2025 00:56:47 +0530
-Subject: [PATCH 01/19] base: Initial SenseProvider for FaceSense service
+Subject: [PATCH 01/15] base: Initial SenseProvider for FaceSense service
 
 Thanks to Tobi to figure out the fix for FaceSense needing a reboot to work after registering a face model.
 Also thanks to someone5678 for fixing compile on QPR1.
@@ -2952,5 +2952,5 @@ index 000000000000..0499bc51ede6
 +
 +}
 -- 
-2.51.0
+2.51.1
 
