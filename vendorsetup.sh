@@ -274,16 +274,10 @@ apply_patches() {
         project_path="$(tr _ / <<<$project_name)"
         cd ${ANDROID_BUILD_TOP}
         cd ${project_path}
-        HEAD_COMMIT=$(git rev-parse HEAD)
-        LINEAGE_COMMIT=$(git rev-parse m/lineage-23.0)
-        if [[ "${HEAD_COMMIT}" == "${LINEAGE_COMMIT}" ]]; then
-            echo "Applying patches for project: ${project_name} on ${HEAD_COMMIT}"
-            if ! git am "${PATCHES_PATH}"/${project_name}/*.patch --no-gpg-sign; then
-                echo "Failed to apply patches for project: ${project_name}. Aborting."
-                git am --abort &> /dev/null
-            fi
-        else
-            echo "Skipping project: ${project_name}, HEAD is not on m/lineage-23.0."
+        echo "Applying patches for project: ${project_name} on ${HEAD_COMMIT}"
+        if ! git am "${PATCHES_PATH}"/${project_name}/*.patch --no-gpg-sign; then
+            echo "Failed to apply patches for project: ${project_name}. Aborting."
+            git am --abort &> /dev/null
         fi
         cd ${ANDROID_BUILD_TOP}
     done
