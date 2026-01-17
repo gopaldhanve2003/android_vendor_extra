@@ -1,7 +1,7 @@
-From 41f2bd83abddeff2121ced0af9274aacc28961a6 Mon Sep 17 00:00:00 2001
+From 25a120db709991960222cb4c08b59b5559f9044e Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Thu, 6 Oct 2022 00:31:03 +0530
-Subject: [PATCH 21/28] Launcher3: Update lens icon in hotseat QSB
+Subject: [PATCH 21/30] Launcher3: Update lens icon in hotseat QSB
 
 From T pixel launcher.
 
@@ -101,5 +101,5 @@ index 892ab4360b..c80a02b8f8 100644
 +        android:pathData="M48,168h39.89l-16-16H48c-8.82,0-16-7.18-16-16v-23.89l-16-16V136C16,153.67,30.33,168,48,168z"/>
  </vector>
 -- 
-2.51.1
+2.52.0
 

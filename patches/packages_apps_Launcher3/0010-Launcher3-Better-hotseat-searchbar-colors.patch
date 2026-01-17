@@ -1,7 +1,7 @@
-From 722b99895bc21f4011563b09d55aea23773ca0b8 Mon Sep 17 00:00:00 2001
+From 9b1d761206204b82ba51c8fc12a64f3e2493ca2b Mon Sep 17 00:00:00 2001
 From: Maitreya29 <maitreyapatni30@gmail.com>
 Date: Mon, 21 Feb 2022 10:42:32 +0530
-Subject: [PATCH 10/28] Launcher3: Better hotseat searchbar colors
+Subject: [PATCH 10/30] Launcher3: Better hotseat searchbar colors
 
 Based on color values from https://github.com/LawnchairLauncher/lawnchair/commit/b69d8d3e941c9e4f0aba43c4683477d206b97d61#diff-25182bc663f7376343f2af1b6646158fcf711a644112d082be074316cc475c5cR75 and thus the additional co author, adapted to our themed only strategy and to use color resources rather than setting them programatically.
 
@@ -157,16 +157,17 @@ index 0000000000..0f51b43fa8
 +</selector>
 \ No newline at end of file
 diff --git a/res/values-night-v31/colors.xml b/res/values-night-v31/colors.xml
-index 6cd32ac01a..ea507fb00a 100644
+index 541154d9eb..4b4f80b67f 100644
 --- a/res/values-night-v31/colors.xml
 +++ b/res/values-night-v31/colors.xml
-@@ -56,6 +56,5 @@
-     <color name="material_color_on_surface">@android:color/system_neutral1_100</color>
+@@ -42,6 +42,5 @@
+ 
      <color name="qsb_primary">@*android:color/system_accent3_100</color>
      <color name="qsb_secondary">@*android:color/system_accent1_300</color>
 -    <color name="qsb_tertiary">@*android:color/system_accent2_500</color>
      <color name="qsb_quaternary">@*android:color/system_accent1_100</color>
  </resources>
+\ No newline at end of file
 -- 
-2.51.1
+2.52.0
 

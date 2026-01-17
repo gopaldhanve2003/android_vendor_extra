@@ -1,7 +1,7 @@
-From ca998493890e93b64907320d5e309ef64f703ad9 Mon Sep 17 00:00:00 2001
+From f821637a71497729011398c09672bc0ba6dcc735 Mon Sep 17 00:00:00 2001
 From: Suphon Thanakornpakapong <paphonb@gmail.com>
 Date: Mon, 13 Oct 2025 13:24:43 +0530
-Subject: [PATCH 07/28] Launcher3: Refine qsb icon layout
+Subject: [PATCH 07/30] Launcher3: Refine qsb icon layout
 
 Change-Id: Ia0250b9f3d42da52e93e3fd632722c8e503b756d
 ---
@@ -99,7 +99,7 @@ index 8941a99522..0b0c58a846 100644
 \ No newline at end of file
 +</com.android.launcher3.qsb.QsbLayout>
 diff --git a/res/values/dimens.xml b/res/values/dimens.xml
-index e23f266dc3..1913a3f518 100644
+index 27145a312f..be4fba4410 100644
 --- a/res/values/dimens.xml
 +++ b/res/values/dimens.xml
 @@ -41,13 +41,12 @@
@@ -119,5 +119,5 @@ index e23f266dc3..1913a3f518 100644
      <!-- Scalable Grid -->
      <dimen name="min_qsb_margin">8dp</dimen>
 -- 
-2.51.1
+2.52.0
 

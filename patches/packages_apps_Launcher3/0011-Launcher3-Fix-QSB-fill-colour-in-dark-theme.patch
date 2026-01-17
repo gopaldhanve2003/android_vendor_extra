@@ -1,7 +1,7 @@
-From ea3935faf56b508031d7df30cb34074cd51a4a8f Mon Sep 17 00:00:00 2001
+From c72cfae60cefaf52a833277ad5471a42065689e4 Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Thu, 6 Oct 2022 00:21:37 +0530
-Subject: [PATCH 11/28] Launcher3: Fix QSB fill colour in dark theme
+Subject: [PATCH 11/30] Launcher3: Fix QSB fill colour in dark theme
 
 Matches Pixel Launcher.
 
@@ -11,10 +11,10 @@ Change-Id: I52a1fb88e2577a65411d0e5c1509212c5a2cf9d5
  1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/res/values/styles.xml b/res/values/styles.xml
-index c9bf75615f..8c5c350561 100644
+index a2622079ee..d8e863b5f4 100644
 --- a/res/values/styles.xml
 +++ b/res/values/styles.xml
-@@ -190,7 +190,7 @@
+@@ -201,7 +201,7 @@
      </style>
  
      <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark">
@@ -23,7 +23,7 @@ index c9bf75615f..8c5c350561 100644
          <item name="qsbIconTintPrimary">@color/qsb_primary</item>
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
-@@ -198,14 +198,14 @@
+@@ -209,14 +209,14 @@
      </style>
  
      <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor">
@@ -41,5 +41,5 @@ index c9bf75615f..8c5c350561 100644
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
 -- 
-2.51.1
+2.52.0
 

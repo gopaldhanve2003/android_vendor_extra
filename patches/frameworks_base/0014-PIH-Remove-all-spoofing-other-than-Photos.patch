@@ -1,7 +1,7 @@
-From d3ef12a3e850e658c07005786d8eb30d6ac41f4b Mon Sep 17 00:00:00 2001
+From 42f6449681eb9e48d67c8a2efb0e4bb240f7771f Mon Sep 17 00:00:00 2001
 From: AdarshGrewal <adarshgrewal@gmail.com>
 Date: Wed, 18 Jun 2025 19:30:24 +0530
-Subject: [PATCH 14/15] PIH: Remove all spoofing other than Photos
+Subject: [PATCH 14/16] PIH: Remove all spoofing other than Photos
 
 Change-Id: I95c4bc3fef70f4e54f0ca89e21107cd438e29d73
 ---
@@ -340,10 +340,10 @@ index 81ca30ea8676..e6a63b9c4c17 100644
  
          if (response == null || response.metadata.certificate == null) {
 diff --git a/services/core/java/com/android/server/wm/ActivityTaskManagerService.java b/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
-index 1a499e15cb4a..fac92ee319f2 100644
+index 4f688edd0e67..68fb9bb58ffe 100644
 --- a/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
 +++ b/services/core/java/com/android/server/wm/ActivityTaskManagerService.java
-@@ -256,7 +256,6 @@ import com.android.internal.protolog.ProtoLog;
+@@ -276,7 +276,6 @@ import com.android.internal.protolog.ProtoLog;
  import com.android.internal.util.ArrayUtils;
  import com.android.internal.util.FastPrintWriter;
  import com.android.internal.util.FrameworkStatsLog;
@@ -351,7 +351,7 @@ index 1a499e15cb4a..fac92ee319f2 100644
  import com.android.internal.util.function.pooled.PooledLambda;
  import com.android.server.LocalManagerRegistry;
  import com.android.server.LocalServices;
-@@ -2027,9 +2026,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
+@@ -2073,9 +2072,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
  
      @Override
      public RootTaskInfo getFocusedRootTaskInfo() throws RemoteException {
@@ -362,7 +362,7 @@ index 1a499e15cb4a..fac92ee319f2 100644
          final long ident = Binder.clearCallingIdentity();
          try {
              synchronized (mGlobalLock) {
-@@ -3190,9 +3187,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
+@@ -3372,9 +3369,7 @@ public class ActivityTaskManagerService extends IActivityTaskManager.Stub {
      /** Sets the task stack listener that gets callbacks when a task stack changes. */
      @Override
      public void registerTaskStackListener(ITaskStackListener listener) {
@@ -374,5 +374,5 @@ index 1a499e15cb4a..fac92ee319f2 100644
      }
  
 -- 
-2.51.1
+2.52.0
 

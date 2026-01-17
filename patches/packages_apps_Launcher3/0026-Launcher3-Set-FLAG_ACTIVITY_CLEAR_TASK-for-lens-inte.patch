@@ -1,7 +1,7 @@
-From 71d209097cf96f8cd20e1157b725c5d3d03f0b54 Mon Sep 17 00:00:00 2001
+From d1d519441bd172fcc8194f1db8dd459ec0af74bf Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Sat, 4 Nov 2023 17:41:39 +0530
-Subject: [PATCH 26/28] Launcher3: Set FLAG_ACTIVITY_CLEAR_TASK for lens
+Subject: [PATCH 26/30] Launcher3: Set FLAG_ACTIVITY_CLEAR_TASK for lens
  intents
 
 Keep recents clean.
@@ -25,5 +25,5 @@ index ab45a5e8e1..0bb50306c7 100644
                      .setData(Uri.parse(Utilities.LENS_URI))
                      .putExtra("lens_activity_params", bundle);
 -- 
-2.51.1
+2.52.0
 

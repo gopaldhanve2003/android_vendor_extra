@@ -1,0 +1,38 @@
+From a931dc69299e92f19ba1d33ceb12b27aa8b79b95 Mon Sep 17 00:00:00 2001
+From: AdarshGrewal <adarshgrewal@gmail.com>
+Date: Sat, 17 Jan 2026 20:36:07 +0530
+Subject: [PATCH 30/30] fixup! Launcher3: Add hotseat bar space only if QSB
+ enabled
+
+Change-Id: I88dada3949beb3d98e2084717cf12cd9cfe7171f
+---
+ src/com/android/launcher3/DeviceProfile.java | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
+
+diff --git a/src/com/android/launcher3/DeviceProfile.java b/src/com/android/launcher3/DeviceProfile.java
+index a7a1bbaf15..48aa578b05 100644
+--- a/src/com/android/launcher3/DeviceProfile.java
++++ b/src/com/android/launcher3/DeviceProfile.java
+@@ -378,7 +378,8 @@ public class DeviceProfile {
+                 inv,
+                 hotseatProfile,
+                 mDeviceProperties,
+-                mIsScalableGrid
++                mIsScalableGrid,
++                context
+         );
+ 
+         if (!isVerticalBarLayout()) {
+@@ -599,7 +600,8 @@ public class DeviceProfile {
+             InvariantDeviceProfile inv,
+             HotseatProfile hotseatProfile,
+             DeviceProperties deviceProperties,
+-            boolean isScalableGrid
++            boolean isScalableGrid,
++            Context context
+     ) {
+         // For foldable (two panel), we inline the qsb if we have the screen open and we are in
+         // either Landscape or Portrait. This cal also be disabled in the device_profile.xml
+-- 
+2.52.0
+

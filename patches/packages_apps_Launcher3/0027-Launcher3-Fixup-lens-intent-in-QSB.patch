@@ -1,7 +1,7 @@
-From 0f5c599774391c1864949a40d47b3374626d978d Mon Sep 17 00:00:00 2001
+From b74da6cf35212c1b3a52089e107ae11cb6e75012 Mon Sep 17 00:00:00 2001
 From: Abhay Singh Gill <abhaygill017@gmail.com>
 Date: Wed, 25 Dec 2024 12:42:43 +0530
-Subject: [PATCH 27/28] Launcher3: Fixup lens intent in QSB
+Subject: [PATCH 27/30] Launcher3: Fixup lens intent in QSB
 
 Signed-off-by: Abhay Singh Gill <abhaygill017@gmail.com>
 ---
@@ -10,10 +10,10 @@ Signed-off-by: Abhay Singh Gill <abhaygill017@gmail.com>
  2 files changed, 5 insertions(+), 8 deletions(-)
 
 diff --git a/src/com/android/launcher3/Utilities.java b/src/com/android/launcher3/Utilities.java
-index 517e586b4d..fb5582af52 100644
+index 0b2dc94ce6..7089cdca8b 100644
 --- a/src/com/android/launcher3/Utilities.java
 +++ b/src/com/android/launcher3/Utilities.java
-@@ -155,7 +155,7 @@ public final class Utilities {
+@@ -164,7 +164,7 @@ public final class Utilities {
      public @interface AdjustmentDirection{}
  
      public static final String GSA_PACKAGE = "com.google.android.googlequicksearchbox";
@@ -46,5 +46,5 @@ index 0bb50306c7..bc5bb1394c 100644
          });
      }
 -- 
-2.51.1
+2.52.0
 

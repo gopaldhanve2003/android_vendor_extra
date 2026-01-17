@@ -1,7 +1,7 @@
-From b8fa80231b1e3325c46f3eec880fca830120878c Mon Sep 17 00:00:00 2001
+From 530e39d00c901b34ab5d5ca5f502a090675006a3 Mon Sep 17 00:00:00 2001
 From: cjh1249131356 <cjh1249131356@gmail.com>
 Date: Sun, 29 Dec 2024 00:09:57 +0800
-Subject: [PATCH 17/28] Launcher3: Fix crash when using QSB with taskbar in
+Subject: [PATCH 17/30] Launcher3: Fix crash when using QSB with taskbar in
  landscape
 
 Signed-off-by: cjh1249131356 <cjh1249131356@gmail.com>
@@ -60,5 +60,5 @@ index 3f9ae87db5..680f9d3c1b 100644
 +
  }
 -- 
-2.51.1
+2.52.0
 

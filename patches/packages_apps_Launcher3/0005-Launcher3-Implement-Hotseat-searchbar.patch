@@ -1,7 +1,7 @@
-From 8e5f9944f12819d3c1dcc7272cde9893c8a31c9d Mon Sep 17 00:00:00 2001
+From 34b6d43cb0b506ca941d54d35b3c4abcb9da7501 Mon Sep 17 00:00:00 2001
 From: Suphon Thanakornpakapong <paphonb@gmail.com>
 Date: Wed, 2 Feb 2022 17:03:39 +0530
-Subject: [PATCH 05/28] Launcher3: Implement Hotseat searchbar
+Subject: [PATCH 05/30] Launcher3: Implement Hotseat searchbar
 
 [Maitreya29: Rewrite QsbLayout and AssistantIconView in java and dynamically color the searchbar]
 
@@ -18,15 +18,15 @@ Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
  res/drawable/ic_super_g_color.xml             | 20 +++++
  res/layout/empty_view.xml                     | 17 ++++
  res/layout/search_container_hotseat.xml       | 62 ++++++++++----
- res/values-night-v31/colors.xml               |  6 +-
+ res/values-night-v31/colors.xml               |  5 ++
  res/values/attrs.xml                          |  6 ++
  res/values/dimens.xml                         | 10 ++-
  res/values/extra_colors.xml                   |  7 ++
  res/values/extra_strings.xml                  |  7 ++
- res/values/styles.xml                         | 59 ++++++++++++--
+ res/values/styles.xml                         | 58 ++++++++++++--
  .../launcher3/qsb/AssistantIconView.java      | 35 ++++++++
  src/com/android/launcher3/qsb/QsbLayout.java  | 80 +++++++++++++++++++
- 15 files changed, 353 insertions(+), 24 deletions(-)
+ 15 files changed, 352 insertions(+), 23 deletions(-)
  create mode 100644 res/color/hotseat_qsb_bg_color.xml
  create mode 100644 res/drawable/bg_google_qsb.xml
  create mode 100644 res/drawable/ic_lens_color.xml
@@ -259,25 +259,25 @@ index 8f12ca07b0..8941a99522 100644
 +</com.android.launcher3.qsb.QsbLayout>
 \ No newline at end of file
 diff --git a/res/values-night-v31/colors.xml b/res/values-night-v31/colors.xml
-index 4a6340add7..6cd32ac01a 100644
+index 737ecddfc6..541154d9eb 100644
 --- a/res/values-night-v31/colors.xml
 +++ b/res/values-night-v31/colors.xml
-@@ -54,4 +54,8 @@
+@@ -39,4 +39,9 @@
          @android:color/system_accent1_800</color>
- 
-     <color name="material_color_on_surface">@android:color/system_neutral1_100</color>
--</resources>
-\ No newline at end of file
+     <color name="widget_picker_unselected_tab_text_color_dark">
+         @android:color/system_neutral2_200</color>
++
 +    <color name="qsb_primary">@*android:color/system_accent3_100</color>
 +    <color name="qsb_secondary">@*android:color/system_accent1_300</color>
 +    <color name="qsb_tertiary">@*android:color/system_accent2_500</color>
 +    <color name="qsb_quaternary">@*android:color/system_accent1_100</color>
-+</resources>
+ </resources>
+\ No newline at end of file
 diff --git a/res/values/attrs.xml b/res/values/attrs.xml
-index 4ecd2f9d71..99b4d17b73 100644
+index f6efe05bc9..37403616ea 100644
 --- a/res/values/attrs.xml
 +++ b/res/values/attrs.xml
-@@ -86,6 +86,12 @@
+@@ -105,6 +105,12 @@
      <attr name="widgetCellTitleColor" format="color" />
      <attr name="widgetCellSubtitleColor" format="color" />
  
@@ -291,7 +291,7 @@ index 4ecd2f9d71..99b4d17b73 100644
      <declare-styleable name="BubbleTextView">
          <attr name="layoutHorizontal" format="boolean" />
 diff --git a/res/values/dimens.xml b/res/values/dimens.xml
-index d5e0b1074f..e23f266dc3 100644
+index 4aaf95efb3..27145a312f 100644
 --- a/res/values/dimens.xml
 +++ b/res/values/dimens.xml
 @@ -40,6 +40,15 @@
@@ -310,7 +310,7 @@ index d5e0b1074f..e23f266dc3 100644
      <!-- Scalable Grid -->
      <dimen name="min_qsb_margin">8dp</dimen>
  
-@@ -447,7 +456,6 @@
+@@ -461,7 +470,6 @@
          @*android:dimen/rounded_corner_content_padding
      </dimen>
      <dimen name="taskbar_stashed_size">0dp</dimen>
@@ -345,10 +345,10 @@ index 0000000000..0800bc04c2
 +    <string name="label_voice_search">Voice search</string>
 +</resources>
 diff --git a/res/values/styles.xml b/res/values/styles.xml
-index 9f30441044..c9bf75615f 100644
+index 8caf8f7c2b..a2622079ee 100644
 --- a/res/values/styles.xml
 +++ b/res/values/styles.xml
-@@ -165,13 +165,52 @@
+@@ -176,13 +176,52 @@
  
      <!-- A derivative project can extend these themes to customize the application theme without
           affecting the base theme -->
@@ -370,7 +370,10 @@ index 9f30441044..c9bf75615f 100644
 +        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
 +        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
 +    </style>
-+
+ 
+-    <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark" />
+-    <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor" />
+-    <style name="AppTheme.Dark.DarkText" parent="@style/LauncherTheme.Dark.DarkText" />
 +    <style name="AppTheme.DarkText" parent="@style/LauncherTheme.DarkText">
 +        <item name="qsbFillColor">@*android:color/background_device_default_light</item>
 +        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
@@ -386,10 +389,7 @@ index 9f30441044..c9bf75615f 100644
 +        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
 +        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
 +    </style>
- 
--    <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark" />
--    <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor" />
--    <style name="AppTheme.Dark.DarkText" parent="@style/LauncherTheme.Dark.DarkText" />
++
 +    <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor">
 +        <item name="qsbFillColor">@*android:color/background_device_default_dark</item>
 +        <item name="qsbIconTintPrimary">@color/qsb_primary</item>
@@ -405,11 +405,11 @@ index 9f30441044..c9bf75615f 100644
 +        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
 +    </style>
  
-     <style name="HomeSettings.Theme" parent="@android:style/Theme.DeviceDefault.Settings">
-         <item name="android:navigationBarColor">?android:colorPrimaryDark</item>
-@@ -529,4 +568,12 @@
-         <item name="android:fontFamily">google-sans-text-medium</item>
-         <item name="android:ellipsize">end</item>
+     <!-- Theme overrides in All Apps when blur is enabled. -->
+     <style name="AllAppsBlurStyle" />
+@@ -654,4 +693,11 @@
+         <item name="widgetsTheme">@style/WidgetContainerTheme</item>
+         <item name="pageIndicatorDotColor">@color/page_indicator_dot_color_light</item>
      </style>
 +
 +    <style name="QsbIconTint">
@@ -418,7 +418,6 @@ index 9f30441044..c9bf75615f 100644
 +        <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
 +        <item name="qsbIconTintTertiary">@color/qsb_tertiary</item>
 +    </style>
-+
  </resources>
 diff --git a/src/com/android/launcher3/qsb/AssistantIconView.java b/src/com/android/launcher3/qsb/AssistantIconView.java
 new file mode 100644
@@ -549,5 +548,5 @@ index 0000000000..c073d17ba7
 +
 +}
 -- 
-2.51.1
+2.52.0
 

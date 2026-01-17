@@ -1,7 +1,7 @@
-From 5418c0e5d84f44cca201b6bd33206bf9b174c5ba Mon Sep 17 00:00:00 2001
+From e63e0a8ef70cf5f188fa92dfaa6a78fb6c512ac6 Mon Sep 17 00:00:00 2001
 From: Patryk Michalik <contact@patrykmichalik.com>
 Date: Mon, 11 Oct 2021 17:32:49 +0200
-Subject: [PATCH 08/28] Launcher3: Refine sizes and positions of icons in Dock
+Subject: [PATCH 08/30] Launcher3: Refine sizes and positions of icons in Dock
  search bar
 
 Change-Id: I4c63a43334ffaf8d345eb1abf55399b4723cf47a
@@ -147,5 +147,5 @@ index 5a93649d4a..8afcb4b067 100644
 +      android:fillColor="#EA4335"/>
 +</vector>
 -- 
-2.51.1
+2.52.0
 

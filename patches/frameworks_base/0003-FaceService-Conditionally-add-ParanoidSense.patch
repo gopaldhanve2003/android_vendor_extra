@@ -1,7 +1,7 @@
-From 069b0524689ab32250f26ec3917f9b4bd44d12dc Mon Sep 17 00:00:00 2001
+From c663e493a85ac300f4e2dfa5a2ae199f905587bc Mon Sep 17 00:00:00 2001
 From: someone5678 <someone5678@users.noreply.github.com>
 Date: Mon, 8 Jan 2024 18:42:13 +0900
-Subject: [PATCH 03/15] FaceService: Conditionally add ParanoidSense
+Subject: [PATCH 03/16] FaceService: Conditionally add ParanoidSense
 
 * We allows devices to use their own FaceService as ParanoidSense has weak modality
 * To make above impl complete, conditionally add ParanoidSense and un-comment AIDL provider support
@@ -15,10 +15,10 @@ Change-Id: I7321580b87499f4020d3b080779e2f9cb1a6fce6
  1 file changed, 15 insertions(+), 16 deletions(-)
 
 diff --git a/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java b/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java
-index 5b27d9f66881..1a9be1e6a953 100644
+index ab9b00af8b79..0fac4c57d39f 100644
 --- a/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java
 +++ b/services/core/java/com/android/server/biometrics/sensors/face/FaceService.java
-@@ -670,19 +670,17 @@ public class FaceService extends SystemService {
+@@ -665,19 +665,17 @@ public class FaceService extends SystemService {
  
          private List<ServiceProvider> getSenseProviders() {
              final List<ServiceProvider> providers = new ArrayList<>();
@@ -49,7 +49,7 @@ index 5b27d9f66881..1a9be1e6a953 100644
              return providers;
          }
  
-@@ -701,13 +699,14 @@ public class FaceService extends SystemService {
+@@ -696,13 +694,14 @@ public class FaceService extends SystemService {
          private List<ServiceProvider> getProviders(
                  FaceSensorConfigurations faceSensorConfigurations) {
              final List<ServiceProvider> providers = new ArrayList<>();
@@ -68,5 +68,5 @@ index 5b27d9f66881..1a9be1e6a953 100644
          }
  
 -- 
-2.51.1
+2.52.0
 

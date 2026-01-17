@@ -1,8 +1,8 @@
-From 682339cfc0cdf3457af4278a14a4a967ecf18c78 Mon Sep 17 00:00:00 2001
+From 36caafdf0cb8d4ee03f0ce31704190dce4b2e37c Mon Sep 17 00:00:00 2001
 From: =?UTF-8?q?Ph=E1=BA=A1m=20Ti=C3=AAn=20Sinh?=
  <song.long.dai.duong@gmail.com>
 Date: Wed, 12 Apr 2023 14:28:11 +0800
-Subject: [PATCH 19/28] Launcher3: Adjust QSB width to align with hotseat
+Subject: [PATCH 19/30] Launcher3: Adjust QSB width to align with hotseat
 
 Signed-off-by: Mohammad Hasan Keramat J <ikeramat@protonmail.com>
 Change-Id: Ieb32ffbff46b0f4ba12711a3ddba3576dde8517f
@@ -45,5 +45,5 @@ index 680f9d3c1b..17ae484ad8 100644
  
          for (int i = 0; i < getChildCount(); i++) {
 -- 
-2.51.1
+2.52.0
 

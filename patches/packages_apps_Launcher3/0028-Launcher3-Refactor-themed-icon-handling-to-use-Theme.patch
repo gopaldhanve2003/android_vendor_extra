@@ -1,7 +1,7 @@
-From ee2ee747b03d910f4cd6a893624d873a7c33d093 Mon Sep 17 00:00:00 2001
+From 93ca6a5eb40ae238e53c3bacac4093d44405c34b Mon Sep 17 00:00:00 2001
 From: NurKeinNeid <nurkeinneid@derpfest.org>
 Date: Sun, 20 Jul 2025 01:55:46 +0200
-Subject: [PATCH 28/28] Launcher3: Refactor themed icon handling to use
+Subject: [PATCH 28/30] Launcher3: Refactor themed icon handling to use
  ThemeManager in all apps and search layouts
 
 Change-Id: I0e8bf003d857d2290be5696adbcbcb861554ba5d
@@ -39,5 +39,5 @@ index bc5bb1394c..397addb781 100644
              mGoogleIcon.setImageResource(R.drawable.ic_super_g_themed);
              mLensIcon.setImageResource(R.drawable.ic_lens_themed);
 -- 
-2.51.1
+2.52.0
 

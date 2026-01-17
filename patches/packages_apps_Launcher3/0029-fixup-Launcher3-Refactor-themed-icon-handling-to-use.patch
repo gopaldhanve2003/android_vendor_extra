@@ -1,0 +1,27 @@
+From 3e37b6d7167b58074655e3fa1995117e30fe2559 Mon Sep 17 00:00:00 2001
+From: AdarshGrewal <adarshgrewal@gmail.com>
+Date: Sat, 17 Jan 2026 20:33:58 +0530
+Subject: [PATCH 29/30] fixup! Launcher3: Refactor themed icon handling to use
+ ThemeManager in all apps and search layouts
+
+Change-Id: I88dada3949beb3d98e2084717cf12cd9cfe7171f
+---
+ src/com/android/launcher3/qsb/QsbLayout.java | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/src/com/android/launcher3/qsb/QsbLayout.java b/src/com/android/launcher3/qsb/QsbLayout.java
+index 397addb781..ede460d8ca 100644
+--- a/src/com/android/launcher3/qsb/QsbLayout.java
++++ b/src/com/android/launcher3/qsb/QsbLayout.java
+@@ -81,7 +81,7 @@ public class QsbLayout extends FrameLayout implements Reorderable,
+ 
+     @Override
+     public void onSharedPreferenceChanged(SharedPreferences prefs, String key) {
+-        if (key.equals(ThemeManager.KEY_THEMED_ICONS)) {
++        if (key.equals("themed_icons")) {
+             setIcons();
+         }
+     }
+-- 
+2.52.0
+

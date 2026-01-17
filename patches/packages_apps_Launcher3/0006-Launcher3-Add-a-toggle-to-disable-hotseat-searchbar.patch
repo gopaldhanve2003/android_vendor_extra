@@ -1,7 +1,7 @@
-From b4201cc8d46455d8eaa8eae3416963dc8850e37a Mon Sep 17 00:00:00 2001
+From 81a1d9bcae0e3dae7d1e89f4e4fa62e9a230b12d Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
-Date: Thu, 3 Feb 2022 03:24:11 +0530
-Subject: [PATCH 06/28] Launcher3: Add a toggle to disable hotseat searchbar
+Date: Sat, 17 Jan 2026 20:33:02 +0530
+Subject: [PATCH 06/30] Launcher3: Add a toggle to disable hotseat searchbar
 
 * @jhonboy121:
   * cache function return values from Utilities class instead of calling over and over.
@@ -14,10 +14,10 @@ Signed-off-by: jhonboy121 <alfredmathew05@gmail.com>
 ---
  res/values/extra_strings.xml                  |  3 ++
  res/xml/launcher_preferences.xml              |  7 ++++
- src/com/android/launcher3/Hotseat.java        |  7 +++-
+ src/com/android/launcher3/Hotseat.java        |  7 ++--
  src/com/android/launcher3/Utilities.java      | 23 ++++++++++++
  .../launcher3/settings/SettingsActivity.java  | 35 +++++++++++++++++++
- 5 files changed, 74 insertions(+), 1 deletion(-)
+ 5 files changed, 73 insertions(+), 2 deletions(-)
 
 diff --git a/res/values/extra_strings.xml b/res/values/extra_strings.xml
 index 0800bc04c2..f92e4cb791 100644
@@ -32,7 +32,7 @@ index 0800bc04c2..f92e4cb791 100644
 +    <string name="flag_wont_be_applied">Flag won\'t be applied until you restart launcher</string>
  </resources>
 diff --git a/res/xml/launcher_preferences.xml b/res/xml/launcher_preferences.xml
-index c32cdeaedb..e7a647c363 100644
+index a2876d9dc1..778556315b 100644
 --- a/res/xml/launcher_preferences.xml
 +++ b/res/xml/launcher_preferences.xml
 @@ -103,4 +103,11 @@
@@ -48,28 +48,28 @@ index c32cdeaedb..e7a647c363 100644
 +
  </androidx.preference.PreferenceScreen>
 diff --git a/src/com/android/launcher3/Hotseat.java b/src/com/android/launcher3/Hotseat.java
-index 1c181794c4..5398ba1d30 100644
+index 239e8afb22..755d2a996b 100644
 --- a/src/com/android/launcher3/Hotseat.java
 +++ b/src/com/android/launcher3/Hotseat.java
-@@ -100,7 +100,12 @@ public class Hotseat extends CellLayout implements Insettable {
- 
-     public Hotseat(Context context, AttributeSet attrs, int defStyle) {
-         super(context, attrs, defStyle);
--        mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
-+
-+        if (Utilities.showQSB(context)) {
-+            mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
-+        } else {
-+            mQsb = LayoutInflater.from(context).inflate(R.layout.empty_view, this, false);
+@@ -109,8 +109,11 @@ public class Hotseat extends CellLayout implements Insettable {
+             mQsb = LayoutInflater.from(context).inflate(R.layout.qsb_container_hotseat, this,
+                     false);
+         } else {
+-            mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this,
+-                    false);
++            if (Utilities.showQSB(context)) {
++                mQsb = LayoutInflater.from(context).inflate(R.layout.search_container_hotseat, this, false);
++            } else {
++                mQsb = LayoutInflater.from(context).inflate(R.layout.empty_view, this, false);
 +        }
+         }
+ 
          addView(mQsb);
-         mIconsAlphaChannels = new MultiValueAlpha(getShortcutsAndWidgets(),
-                 ALPHA_CHANNEL_CHANNELS_COUNT);
 diff --git a/src/com/android/launcher3/Utilities.java b/src/com/android/launcher3/Utilities.java
-index d20a247f8a..5cc511fe85 100644
+index 2dd683c041..cc330e676a 100644
 --- a/src/com/android/launcher3/Utilities.java
 +++ b/src/com/android/launcher3/Utilities.java
-@@ -32,9 +32,11 @@ import android.app.WallpaperManager;
+@@ -36,9 +36,11 @@ import android.app.WallpaperManager;
  import android.content.Context;
  import android.content.pm.LauncherActivityInfo;
  import android.content.pm.LauncherApps;
@@ -81,7 +81,7 @@ index d20a247f8a..5cc511fe85 100644
  import android.graphics.Color;
  import android.graphics.ColorFilter;
  import android.graphics.LightingColorFilter;
-@@ -152,6 +154,9 @@ public final class Utilities {
+@@ -161,6 +163,9 @@ public final class Utilities {
      @IntDef({TRANSLATE_UP, TRANSLATE_DOWN, TRANSLATE_LEFT, TRANSLATE_RIGHT})
      public @interface AdjustmentDirection{}
  
@@ -91,7 +91,7 @@ index d20a247f8a..5cc511fe85 100644
      /**
       * Returns true if theme is dark.
       */
-@@ -979,4 +984,22 @@ public final class Utilities {
+@@ -1065,4 +1070,22 @@ public final class Utilities {
      public static boolean isWorkspaceEditAllowed(Context context) {
          return !LauncherPrefs.WORKSPACE_LOCK.get(context);
      }
@@ -115,20 +115,22 @@ index d20a247f8a..5cc511fe85 100644
 +
  }
 diff --git a/src/com/android/launcher3/settings/SettingsActivity.java b/src/com/android/launcher3/settings/SettingsActivity.java
-index 43225eaeeb..6f2aa45543 100644
+index c3e408d26c..767913270b 100644
 --- a/src/com/android/launcher3/settings/SettingsActivity.java
 +++ b/src/com/android/launcher3/settings/SettingsActivity.java
-@@ -27,14 +27,17 @@ import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
+@@ -28,9 +28,11 @@ import static com.android.launcher3.InvariantDeviceProfile.TYPE_TABLET;
  import static com.android.launcher3.states.RotationHelper.ALLOW_ROTATION_PREFERENCE_KEY;
  
  import android.app.Activity;
 +import android.content.Context;
  import android.content.Intent;
  import android.content.pm.ActivityInfo;
+ import android.content.pm.LauncherApps;
 +import android.content.pm.PackageManager;
+ import android.content.res.Resources;
  import android.net.Uri;
  import android.os.Bundle;
- import android.provider.Settings;
+@@ -38,6 +40,7 @@ import android.provider.Settings;
  import android.text.TextUtils;
  import android.view.MenuItem;
  import android.view.View;
@@ -136,7 +138,7 @@ index 43225eaeeb..6f2aa45543 100644
  
  import androidx.annotation.Nullable;
  import androidx.annotation.VisibleForTesting;
-@@ -50,6 +53,7 @@ import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallb
+@@ -53,6 +56,7 @@ import androidx.preference.PreferenceFragmentCompat.OnPreferenceStartScreenCallb
  import androidx.preference.PreferenceGroup;
  import androidx.preference.PreferenceGroup.PreferencePositionCallback;
  import androidx.preference.PreferenceScreen;
@@ -144,7 +146,7 @@ index 43225eaeeb..6f2aa45543 100644
  import androidx.recyclerview.widget.RecyclerView;
  
  import com.android.launcher3.BuildConfig;
-@@ -57,11 +61,14 @@ import com.android.launcher3.Flags;
+@@ -60,11 +64,14 @@ import com.android.launcher3.Flags;
  import com.android.launcher3.InvariantDeviceProfile;
  import com.android.launcher3.LauncherFiles;
  import com.android.launcher3.R;
@@ -156,10 +158,10 @@ index 43225eaeeb..6f2aa45543 100644
 +import com.android.launcher3.util.PluginManagerWrapper;
  import com.android.launcher3.util.SettingsCache;
 +import com.android.launcher3.Utilities;
+ import com.android.settingslib.widget.SettingsBasePreferenceFragment;
+ import com.android.settingslib.widget.SettingsThemeHelper;
  
- /**
-  * Settings activity for Launcher. Currently implements the following setting: Allow rotation
-@@ -185,6 +192,10 @@ public class SettingsActivity extends FragmentActivity
+@@ -201,6 +208,10 @@ public class SettingsActivity extends FragmentActivity
  
          private boolean mPreferenceHighlighted = false;
  
@@ -170,10 +172,10 @@ index 43225eaeeb..6f2aa45543 100644
          @Override
          public void onCreate(@Nullable Bundle savedInstanceState) {
              if (BuildConfig.IS_DEBUG_DEVICE) {
-@@ -362,10 +373,33 @@ public class SettingsActivity extends FragmentActivity
-                     return true;
+@@ -376,10 +387,33 @@ public class SettingsActivity extends FragmentActivity
                  case KEY_SUGGESTIONS:
-                     return LineageUtils.isPackageEnabled(getActivity(), SUGGESTIONS_PACKAGE);
+                     return launcherApps != null &&
+                             launcherApps.isPackageEnabled(SUGGESTIONS_PACKAGE, myUserHandle());
 +                case Utilities.KEY_DOCK_SEARCH:
 +                    mDockSearchPref = preference;
 +                    ((SwitchPreferenceCompat) mDockSearchPref).setChecked(Utilities.showQSB(getContext()));
@@ -204,7 +206,7 @@ index 43225eaeeb..6f2aa45543 100644
          @Override
          public void onResume() {
              super.onResume();
-@@ -381,6 +415,7 @@ public class SettingsActivity extends FragmentActivity
+@@ -395,6 +429,7 @@ public class SettingsActivity extends FragmentActivity
              if (mRestartOnResume) {
                  recreateActivityNow();
              }
@@ -213,5 +215,5 @@ index 43225eaeeb..6f2aa45543 100644
  
          @Override
 -- 
-2.51.1
+2.52.0
 

@@ -1,7 +1,7 @@
-From 1e925c02e73944cfcf6dba5808cf35b4bf11d2ce Mon Sep 17 00:00:00 2001
+From 12c3891f78be47d471274ea2409f162282c7ba0c Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Mon, 4 Dec 2023 01:45:18 +0530
-Subject: [PATCH 07/15] SystemUI: Use proper tint for face unlock icon
+Subject: [PATCH 07/16] SystemUI: Use proper tint for face unlock icon
 
 Change-Id: Idfc274050c855ebdafa5a87d1066969c38603973
 Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
@@ -24,5 +24,5 @@ index 26d7f803fb1d..4a8447a27aeb 100644
  
          <com.android.systemui.statusbar.phone.KeyguardIndicationTextView
 -- 
-2.51.1
+2.52.0
 

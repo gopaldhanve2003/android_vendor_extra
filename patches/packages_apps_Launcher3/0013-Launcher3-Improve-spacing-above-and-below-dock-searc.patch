@@ -1,7 +1,7 @@
-From 5c41208ddc6d7aa4f7f466ca92bfa01fbe9501cd Mon Sep 17 00:00:00 2001
+From cae3cf5dbd894bb1a86d77f9d13af05d81edd6cd Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Wed, 14 Dec 2022 09:09:15 +0530
-Subject: [PATCH 13/28] Launcher3: Improve spacing above and below dock
+Subject: [PATCH 13/30] Launcher3: Improve spacing above and below dock
  searchbar
 
 * Bottom of screen has some or other navbar components which adds little extra space
@@ -13,10 +13,10 @@ Signed-off-by: Pranav Vashi <neobuddy89@gmail.com>
  1 file changed, 2 insertions(+), 2 deletions(-)
 
 diff --git a/res/values/config.xml b/res/values/config.xml
-index c6ef12c687..a17eeaace8 100644
+index cb6e50ba99..1b87ab7132 100644
 --- a/res/values/config.xml
 +++ b/res/values/config.xml
-@@ -81,8 +81,8 @@
+@@ -65,8 +65,8 @@
  
      <!-- Scalable Grid configuration -->
      <!-- This is a float because it is converted to dp later in DeviceProfile -->
@@ -28,5 +28,5 @@ index c6ef12c687..a17eeaace8 100644
      <!-- Whether to enable background preloading of task thumbnails. -->
      <bool name="config_enableTaskSnapshotPreloading">true</bool>
 -- 
-2.51.1
+2.52.0
 

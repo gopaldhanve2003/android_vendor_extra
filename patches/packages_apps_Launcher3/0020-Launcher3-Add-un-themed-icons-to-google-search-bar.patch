@@ -1,7 +1,7 @@
-From 42473e6fb86693d2c77ad0783bf54217018a82af Mon Sep 17 00:00:00 2001
+From 3bc99711d81a2015fb0b64abec46e67c0e6f0069 Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Fri, 13 May 2022 12:21:55 +0530
-Subject: [PATCH 20/28] Launcher3: Add un-themed icons to google search bar
+Subject: [PATCH 20/30] Launcher3: Add un-themed icons to google search bar
 
 Themed icons should only be used when themed icons are
 enabled by user in ThemePicker. Otherwise, use the
@@ -302,5 +302,5 @@ index 17ae484ad8..ab45a5e8e1 100644
              Bundle bundle = new Bundle();
              bundle.putString("caller_package", Utilities.GSA_PACKAGE);
 -- 
-2.51.1
+2.52.0
 

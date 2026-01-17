@@ -1,7 +1,7 @@
-From 70c40eb1b3c3a4fb0af8e04c6f3c367da244fd3d Mon Sep 17 00:00:00 2001
+From 1c7a2f3813a9c04c2dc191718b40532caf5fa7c9 Mon Sep 17 00:00:00 2001
 From: Abhay Singh Gill <abhaygill017@gmail.com>
 Date: Tue, 24 Dec 2024 18:38:08 +0530
-Subject: [PATCH 25/28] Launcher3: Improve QSB layout
+Subject: [PATCH 25/30] Launcher3: Improve QSB layout
 
 Signed-off-by: Abhay Singh Gill <abhaygill017@gmail.com>
 ---
@@ -90,10 +90,10 @@ index 0b0c58a846..127ecbb4de 100644
      </LinearLayout>
  </com.android.launcher3.qsb.QsbLayout>
 diff --git a/res/values/config.xml b/res/values/config.xml
-index a17eeaace8..7510c991b9 100644
+index 1b87ab7132..8b27334d22 100644
 --- a/res/values/config.xml
 +++ b/res/values/config.xml
-@@ -81,8 +81,8 @@
+@@ -65,8 +65,8 @@
  
      <!-- Scalable Grid configuration -->
      <!-- This is a float because it is converted to dp later in DeviceProfile -->
@@ -105,7 +105,7 @@ index a17eeaace8..7510c991b9 100644
      <!-- Whether to enable background preloading of task thumbnails. -->
      <bool name="config_enableTaskSnapshotPreloading">true</bool>
 diff --git a/res/values/dimens.xml b/res/values/dimens.xml
-index 1913a3f518..46b82854eb 100644
+index be4fba4410..bc52a9154f 100644
 --- a/res/values/dimens.xml
 +++ b/res/values/dimens.xml
 @@ -42,11 +42,11 @@
@@ -124,7 +124,7 @@ index 1913a3f518..46b82854eb 100644
  
      <!-- Scalable Grid -->
      <dimen name="min_qsb_margin">8dp</dimen>
-@@ -455,10 +455,10 @@
+@@ -469,10 +469,10 @@
          @*android:dimen/rounded_corner_content_padding
      </dimen>
      <dimen name="taskbar_stashed_size">0dp</dimen>
@@ -138,5 +138,5 @@ index 1913a3f518..46b82854eb 100644
      <dimen name="taskbar_running_app_indicator_width">0dp</dimen>
      <dimen name="taskbar_running_app_indicator_top_margin">0dp</dimen>
 -- 
-2.51.1
+2.52.0
 

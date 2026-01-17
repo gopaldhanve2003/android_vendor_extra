@@ -271,8 +271,6 @@ release() {
 apply_patches() {
     cd ${ANDROID_BUILD_TOP}
 
-    ./vendor/lineage/build/tools/repopick.py -t md3e-flags -f
-
     PATCHES_PATH=$PWD/vendor/extra/patches
 
     for project_name in $(cd "${PATCHES_PATH}"; echo */); do

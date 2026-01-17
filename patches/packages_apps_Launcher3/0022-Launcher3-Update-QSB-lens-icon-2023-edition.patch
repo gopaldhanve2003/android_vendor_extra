@@ -1,7 +1,7 @@
-From eec3aeab5eea89f31609fff285756f1ed557bb53 Mon Sep 17 00:00:00 2001
+From eeb7231d4d553c432f3b5f90d51fbef15493697a Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Wed, 1 Nov 2023 17:53:36 +0530
-Subject: [PATCH 22/28] Launcher3: Update QSB lens icon (2023 edition)
+Subject: [PATCH 22/30] Launcher3: Update QSB lens icon (2023 edition)
 
 From husky U1B2. Matches the latest Google search widget.
 
@@ -88,5 +88,5 @@ index c80a02b8f8..b03f931d38 100644
 +        android:pathData="M58.3333 12.5H41.6667L35.4167 20.8333H29.5833C20.151 20.8333 12.5 28.4844 12.5 37.9167V47.9167H20.8333V38.5417C20.8333 33.4844 24.5833 29.1667 29.1667 29.1667H70.8333L58.3333 12.5Z"/>
  </vector>
 -- 
-2.51.1
+2.52.0
 

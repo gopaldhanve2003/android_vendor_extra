@@ -1,7 +1,7 @@
-From 9b7ef113f2ad2a96195d1392feffd013e7bce975 Mon Sep 17 00:00:00 2001
+From 02528aa7662271270c9e07ea706d9914d69c428f Mon Sep 17 00:00:00 2001
 From: Adithya R <gh0strider.2k18.reborn@gmail.com>
 Date: Thu, 28 Dec 2023 06:22:25 +0530
-Subject: [PATCH 24/28] Launcher3: Use folder background color for QSB
+Subject: [PATCH 24/30] Launcher3: Use folder background color for QSB
 
 Background color is black when black theme is used. That looked bad
 on QSB for obvious reasons.
@@ -12,10 +12,10 @@ Change-Id: I4733c4a3429b38c46328d4c8682760e98655aa8f
  1 file changed, 6 insertions(+), 6 deletions(-)
 
 diff --git a/res/values/styles.xml b/res/values/styles.xml
-index 8c5c350561..3f9e0eaa57 100644
+index d8e863b5f4..3a39a3a712 100644
 --- a/res/values/styles.xml
 +++ b/res/values/styles.xml
-@@ -166,7 +166,7 @@
+@@ -177,7 +177,7 @@
      <!-- A derivative project can extend these themes to customize the application theme without
           affecting the base theme -->
      <style name="AppTheme" parent="@style/LauncherTheme">
@@ -24,7 +24,7 @@ index 8c5c350561..3f9e0eaa57 100644
          <item name="qsbIconTintPrimary">@color/qsb_primary</item>
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
-@@ -174,7 +174,7 @@
+@@ -185,7 +185,7 @@
      </style>
  
      <style name="AppTheme.DarkMainColor" parent="@style/LauncherTheme.DarkMainColor">
@@ -33,7 +33,7 @@ index 8c5c350561..3f9e0eaa57 100644
          <item name="qsbIconTintPrimary">@color/qsb_primary</item>
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
-@@ -182,7 +182,7 @@
+@@ -193,7 +193,7 @@
      </style>
  
      <style name="AppTheme.DarkText" parent="@style/LauncherTheme.DarkText">
@@ -42,7 +42,7 @@ index 8c5c350561..3f9e0eaa57 100644
          <item name="qsbIconTintPrimary">@color/qsb_primary</item>
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
-@@ -190,7 +190,7 @@
+@@ -201,7 +201,7 @@
      </style>
  
      <style name="AppTheme.Dark" parent="@style/LauncherTheme.Dark">
@@ -51,7 +51,7 @@ index 8c5c350561..3f9e0eaa57 100644
          <item name="qsbIconTintPrimary">@color/qsb_primary</item>
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
-@@ -198,14 +198,14 @@
+@@ -209,14 +209,14 @@
      </style>
  
      <style name="AppTheme.Dark.DarkMainColor" parent="@style/LauncherTheme.Dark.DarkMainColor">
@@ -69,5 +69,5 @@ index 8c5c350561..3f9e0eaa57 100644
          <item name="qsbIconTintQuaternary">@color/qsb_quaternary</item>
          <item name="qsbIconTintSecondary">@color/qsb_secondary</item>
 -- 
-2.51.1
+2.52.0
 
