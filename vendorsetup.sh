@@ -46,6 +46,7 @@ release() {
     project="$(basename ${ANDROID_BUILD_TOP})"
     sf_project_name=""
     extraimages=""
+    pr_branch="los-23"
 
     if [[ "${device}" == "garnet" ]]; then
         sf_project_name="garnetrandom"
@@ -87,12 +88,12 @@ release() {
     [[ -d "${ANDROID_BUILD_TOP}/ota" ]] && rm -rf "${ANDROID_BUILD_TOP}/ota"
     git clone git@github.com:loonage/ota.git "${ANDROID_BUILD_TOP}/ota"
     cd "${ANDROID_BUILD_TOP}/ota"
-    git pull origin "${project}"
+    git pull origin "${pr_branch}"
 
-    if git fetch origin "${project}"; then
-        git checkout -B "${project}" origin/"${project}"
+    if git fetch origin "${pr_branch}"; then
+        git checkout -B "${pr_branch}" origin/"${pr_branch}"
     else
-        git checkout --orphan "${project}"
+        git checkout --orphan "${pr_branch}"
         git rm -rf ${device_variant}.json
     fi
 
