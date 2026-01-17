@@ -109,9 +109,13 @@ release() {
         m bacon
     fi
 
-    build_props="${OUT}/system/build.prop"
-    filename=$(grep -oP '(?<=ro.lineage.version=).*' "${build_props}")
-    filename="lineage-${filename}.zip"
+    get_prop() {
+        local prop="$1"
+        grep -h "^${prop}=" "${OUT}/system/build.prop" "${OUT}/product/etc/build.prop" 2>/dev/null | \
+        head -1 | cut -d= -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+    }
+
+    filename="lineage-$(get_prop 'ro.lineage.version').zip"
     tag_name=$(echo "$filename" | grep -oP '(?<=lineage-\d+\.\d+-)(\d{8})(?=-UNOFFICIAL)')
 
     if [ -z "$tag_name" ]; then
@@ -129,11 +133,10 @@ release() {
     fi
 
     id=$(awk '{print $1}' "${OUT}/${filename}.sha256sum")
-    romtype=$(grep -oP '(?<=ro.lineage.releasetype=).*' "${build_props}")
+    romtype=$(get_prop 'ro.lineage.releasetype')
     size=$(stat -c%s "${OUT}/${filename}")
-    version=$(grep -oP '(?<=ro.lineage.build.version=).*' "${build_props}")
-    datetime=$(cat "${OUT}"/system/build.prop | grep ro.build.date.utc=)
-    datetime="${datetime#*=}"
+    version=$(get_prop 'ro.lineage.build.version')
+    datetime=$(get_prop 'ro.build.date.utc')
 
     release_url="https://sourceforge.net/projects/${sf_project_name}/files/los/${tag_name}/$(basename ${filename})/download"
     ota_entry=$(jq -n \
