@@ -1,7 +1,7 @@
-From c93c1f8741b68a87fa0e9b1d1c0da2a9aaff0168 Mon Sep 17 00:00:00 2001
+From 33320f8cc026d544311b2902a1f6cccd9018286c Mon Sep 17 00:00:00 2001
 From: Pranav Vashi <neobuddy89@gmail.com>
 Date: Sun, 7 Jan 2024 01:51:03 +0530
-Subject: [PATCH 08/16] SystemUI: biometrics: Follow user setting to confirm
+Subject: [PATCH 08/17] SystemUI: biometrics: Follow user setting to confirm
  face unlock
 
 * It seems that AOSP code migration has some pending clean up

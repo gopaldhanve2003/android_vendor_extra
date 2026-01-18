@@ -1,7 +1,7 @@
-From 85cb2becf70a0cc42b5dc5d523ba1c27eb946341 Mon Sep 17 00:00:00 2001
+From 6a91f0db5222831f14a2958523e6f73086f063a4 Mon Sep 17 00:00:00 2001
 From: minaripenguin <minaripenguin@users.noreply.github.com>
 Date: Sun, 28 Apr 2024 08:22:52 +0800
-Subject: [PATCH 05/16] SystemUI: Disable FaceUnlock Lockouts
+Subject: [PATCH 05/17] SystemUI: Disable FaceUnlock Lockouts
 
 Change-Id: I2fb0b88deadc6c3ea78793d514c136c4d134bb6f
 Signed-off-by: minaripenguin <minaripenguin@users.noreply.github.com>
