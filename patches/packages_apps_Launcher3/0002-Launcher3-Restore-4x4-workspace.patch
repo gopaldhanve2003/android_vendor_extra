@@ -1,7 +1,7 @@
-From 5d889a573963fa092734bc6f5e0b36e2580243bd Mon Sep 17 00:00:00 2001
+From 078505bdbecc2b27f96946d3cd155d4f9f18862f Mon Sep 17 00:00:00 2001
 From: elpaablo <donopwhile1@gmail.com>
 Date: Tue, 21 Nov 2023 15:42:03 +0000
-Subject: [PATCH 02/30] Launcher3: Restore 4x4 workspace
+Subject: [PATCH 2/4] Launcher3: Restore 4x4 workspace
 
 ---
  res/xml/default_workspace_4x4.xml | 65 +++++++++++++++++++++++++++++++

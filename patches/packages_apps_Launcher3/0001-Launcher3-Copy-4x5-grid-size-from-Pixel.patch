@@ -1,7 +1,7 @@
-From 56a262d4b9e012439b401fa029549ce412a01c61 Mon Sep 17 00:00:00 2001
+From 9ee376e6738cdb1a8e652f2e624508ed90edcf07 Mon Sep 17 00:00:00 2001
 From: Richard Raya <rdxzv.dev@gmail.com>
 Date: Sun, 7 Apr 2024 14:01:08 -0300
-Subject: [PATCH 01/30] Launcher3: Copy 4x5 grid size from Pixel
+Subject: [PATCH 1/4] Launcher3: Copy 4x5 grid size from Pixel
 
 Change-Id: Ic6d914092961368afcc16d4a4ad991ea16064c23
 Signed-off-by: Richard Raya <rdxzv.dev@gmail.com>

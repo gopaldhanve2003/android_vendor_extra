@@ -1,7 +1,7 @@
-From 9b80e4763a778ff7af8cc4a9b13f7b43a113a7b3 Mon Sep 17 00:00:00 2001
+From 18ea2d2acb4ec20c46dcad8e7ee367b1ae35b5c6 Mon Sep 17 00:00:00 2001
 From: Abhay Singh Gill <abhaygill017@gmail.com>
 Date: Sun, 5 Jan 2025 17:41:25 +0530
-Subject: [PATCH 04/30] Launcher3: Ditch workspace top/bottom padding for 6*5
+Subject: [PATCH 4/4] Launcher3: Ditch workspace top/bottom padding for 6*5
  grid
 
 Limits workspace grid area.

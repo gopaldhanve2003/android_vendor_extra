@@ -1,7 +1,7 @@
-From 66d3b56b033a5a0704c1a57927ed16bc010e47b6 Mon Sep 17 00:00:00 2001
+From 5b94dcd03c525ea863b2aa70273d994ce397f66f Mon Sep 17 00:00:00 2001
 From: Abhay Singh Gill <abhaygill017@gmail.com>
 Date: Tue, 24 Dec 2024 11:08:26 +0530
-Subject: [PATCH 03/30] Launcher3: Update grid sizes from Pixel launcher
+Subject: [PATCH 3/4] Launcher3: Update grid sizes from Pixel launcher
 
 * This is a minimal import from Pixel launcher
 * Adapt 5+ column grids to be scalable as well
