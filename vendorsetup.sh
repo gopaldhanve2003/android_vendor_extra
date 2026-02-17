@@ -1,16 +1,3 @@
-enable_ccache() {
-    local ccache_dir="$HOME/CCACHE/.ccache"
-    if [[ ! -d "$ccache_dir" ]]; then
-        echo -e "\e[34m[INFO]\e[0m Creating ccache directory at $ccache_dir"
-        mkdir -p "$ccache_dir"
-    fi
-    export USE_CCACHE=1
-    export CCACHE_EXEC="$(command -v ccache)"
-    export CCACHE_DIR="$ccache_dir"
-    export CCACHE_NOCOMPRESS=true
-    echo -e "\e[32m[INFO]\e[0m ccache enabled using directory $ccache_dir"
-}
-
 enable_gms() {
     local enable_gms_flag=${1:-true}
     if [[ "${enable_gms_flag}" == "true" && -f vendor/partner_gms/Android.mk ]]; then
@@ -25,14 +12,6 @@ enable_gms() {
         export BUILD_VANILLA=true
         unset TARGET_UNOFFICIAL_BUILD_ID
         echo -e "\e[33m[WARN]\e[0m gms not found or disabling GMS. Proceeding with vanilla build."
-    fi
-}
-
-enable_thin_lto() {
-    local enable_thin_lto=${1:-true}
-    if [[ "${enable_thin_lto}" == "true" ]]; then
-        export KERNEL_LTO=thin
-        echo -e "\e[32m[INFO]\e[0m Forcing thin lto."
     fi
 }
 
@@ -290,5 +269,4 @@ apply_patches() {
     done
 }
 
-enable_ccache
 enable_gms
