@@ -112,34 +112,63 @@ release() {
         exit 1
     fi
 
-    id=$(awk '{print $1}' "${OUT}/${filename}.sha256sum")
+    metadata=$(unzip -p "${OUT}/${filename}" META-INF/com/android/metadata 2>/dev/null)
+
+    get_meta() {
+        local key="$1"
+        grep -m1 "^${key}=" <<< "${metadata}" | cut -d= -f2- | sed 's/^[[:space:]]*//;s/[[:space:]]*$//'
+    }
+
+    sha256=$(awk '{print $1}' "${OUT}/${filename}.sha256sum")
     romtype=$(get_prop 'ro.lineage.releasetype')
     size=$(stat -c%s "${OUT}/${filename}")
     version=$(get_prop 'ro.lineage.build.version')
     datetime=$(get_prop 'ro.build.date.utc')
+    os_patch_level=$(get_meta 'post-security-patch-level')
+    os_sdk_level=$(get_meta 'post-sdk-level')
+    ota_property_files=$(get_meta 'ota-property-files')
+
+    if [ -z "${os_sdk_level}" ]; then
+        echo -e "\e[31m[ERROR]\e[0m Failed to read post-sdk-level from ${filename} metadata."
+        telegram "[ERROR] Failed to read post-sdk-level from ${filename} metadata."
+        exit 1
+    fi
+
+    if [ -z "${ota_property_files}" ]; then
+        echo -e "\e[33m[WARN]\e[0m ota-property-files missing from ${filename} metadata. Streaming updates will be unavailable."
+        telegram "[WARN] ota-property-files missing from ${filename} metadata. Streaming updates will be unavailable."
+    fi
 
     release_url="https://sourceforge.net/projects/${sf_project_name}/files/los/${tag_name}/$(basename ${filename})/download"
     ota_entry=$(jq -n \
-        --arg datetime "${datetime}" \
+        --argjson datetime "${datetime}" \
         --arg filename "${filename}" \
-        --arg id "${id}" \
-        --arg romtype "${romtype}" \
+        --arg os_patch_level "${os_patch_level}" \
+        --argjson os_sdk_level "${os_sdk_level}" \
+        --arg ota_property_files "${ota_property_files}" \
+        --arg sha256 "${sha256}" \
         --argjson size "${size}" \
+        --arg romtype "${romtype}" \
         --arg version "${version}" \
         --arg release_url "$release_url" \
-        '{
-            response: [
-                {
-                    datetime: $datetime,
-                    filename: $filename,
-                    id: $id,
-                    romtype: $romtype,
-                    size: $size,
-                    url: $release_url,
-                    version: $version
-                }
-            ]
-        }')
+        '[
+            {
+                datetime: $datetime,
+                files: [
+                    {
+                        filename: $filename,
+                        os_patch_level: $os_patch_level,
+                        os_sdk_level: $os_sdk_level,
+                        ota_property_files: $ota_property_files,
+                        sha256: $sha256,
+                        size: $size,
+                        url: $release_url
+                    } | with_entries(select(.value != ""))
+                ],
+                type: $romtype,
+                version: $version
+            }
+        ]')
 
     echo -e "\e[32m[INFO]\e[0m Generated OTA JSON entry:"
     echo "${ota_entry}"
