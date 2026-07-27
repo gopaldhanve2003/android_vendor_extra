@@ -268,5 +268,3 @@ apply_patches() {
         cd ${ANDROID_BUILD_TOP}
     done
 }
-
-enable_gms
