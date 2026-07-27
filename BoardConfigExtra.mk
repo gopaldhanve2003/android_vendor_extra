@@ -1,8 +1,5 @@
-ifneq ($(BUILD_VANILLA), true)
-
 # Pixel
 include vendor/pixel/clocks/products/board.mk
-endif
 
 # MiuiCamera
 -include device/xiaomi/$(PRODUCT_DEVICE)-miuicamera/BoardConfig.mk
