@@ -298,24 +298,12 @@ release() {
                     remote_file="$(basename "${image_path}")"
                     remote_path="/home/frs/project/${sf_project_name}/los/${tag_name}/${remote_file}"
                     tg status "Uploading extra images — ${remote_file}"
-                    echo "[INFO] Checking size of ${remote_file} on the server at path: ${remote_path}"
-                    rsync_output=$(rsync --dry-run -avz "adarshgrewal@frs.sourceforge.net:${remote_path}" 2>&1)
-
-                    if echo "${rsync_output}" | grep -q 'No such file or directory'; then
-                        echo "[INFO] ${remote_file} not found on the server at path: ${remote_path}. Proceeding with upload."
-                        rsync -Ph "${image_path}" "adarshgrewal@frs.sourceforge.net:${remote_path}"
+                    echo "[INFO] Checking whether ${remote_file} is on the server at path: ${remote_path}"
+                    if rsync --list-only "adarshgrewal@frs.sourceforge.net:${remote_path}" >/dev/null 2>&1; then
+                        echo "[INFO] ${remote_file} already on the server. Skipping upload."
                     else
-                        remote_size=$(echo "${rsync_output}" | grep -oP '(\d+) bytes' | awk '{print $1}')
-                        
-                        if [ -n "${remote_size}" ]; then
-                            echo "[INFO] Found ${remote_file} on server at path ${remote_path} with size: ${remote_size} bytes."
-                            if [ "${remote_size}" -gt 0 ]; then
-                                echo "[INFO] ${remote_file} already exists and is non-zero. Skipping upload."
-                            fi
-                        else
-                            echo "[ERROR] Failed to extract size for ${remote_file} from rsync output."
-                            tg error "Failed to extract size for ${remote_file} from rsync output."
-                        fi
+                        echo "[INFO] ${remote_file} not found on the server. Uploading."
+                        rsync -Ph "${image_path}" "adarshgrewal@frs.sourceforge.net:${remote_path}"
                     fi
                 else
                     echo "[ERROR] ${image_path} not found in ${OUT}"
