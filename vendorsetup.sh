@@ -13,9 +13,49 @@ enable_gms() {
     fi
 }
 
-telegram() {
-    local message="$1"
-    /home/adarsh/telegram.sh/telegram "$message"
+TELEGRAM_BIN="/home/adarsh/telegram.sh/telegram"
+TELEGRAM_PROGRESS_ID=""
+tg() {
+    local action="$1"
+
+    case "${action}" in
+        escape)
+            printf '%s' "$2" | sed 's/&/\&amp;/g; s/</\&lt;/g; s/>/\&gt;/g'
+            ;;
+        send)
+            if [ -n "$3" ]; then
+                "${TELEGRAM_BIN}" -H -D -T "$3" "$2"
+            else
+                "${TELEGRAM_BIN}" -H -D "$2"
+            fi
+            ;;
+        warn)
+            tg send "<b>Warning:</b> $(tg escape "$2")"
+            ;;
+        error)
+            tg send "<b>Error:</b> $(tg escape "$2")"
+            ;;
+        code)
+            tg send "$(tg escape "$2")"$'\n'"<pre>$(tg escape "$3")</pre>"
+            ;;
+        status)
+            tg status-html "<b>Status:</b> $(tg escape "$2")"
+            ;;
+        status-html)
+            if [ -z "${TELEGRAM_PROGRESS_ID}" ]; then
+                TELEGRAM_PROGRESS_ID=$("${TELEGRAM_BIN}" -H -D -p "$2")
+            else
+                "${TELEGRAM_BIN}" -H -D -e "${TELEGRAM_PROGRESS_ID}" "$2" >/dev/null
+            fi
+            ;;
+        status-reset)
+            TELEGRAM_PROGRESS_ID=""
+            ;;
+        *)
+            echo "tg: unknown action '${action}'" >&2
+            return 1
+            ;;
+    esac
 }
 
 release() {
@@ -47,7 +87,7 @@ release() {
 
     if [ -z "${sf_project_name}" ]; then
         echo -e "\e[31m[ERROR]\e[0m Project name is not set. Skipping release."
-        telegram "[ERROR] Project name is not set. Skipping release."
+        tg error "Project name is not set. Skipping release."
         exit 1
     fi
 
@@ -59,8 +99,16 @@ release() {
         device_variant="${device}"
     fi
 
+    extraimages=$(echo "${extraimages}" | xargs)
+
     echo -e "\e[32m[INFO]\e[0m Starting release for device: ${device} (${type} variant)"
-    telegram "[INFO] Starting release for device: ${device} (${type} variant)"
+    tg send "<b>Device:</b> $(tg escape "${device}")
+<b>Variant:</b> $(tg escape "${type}")
+<b>Project:</b> $(tg escape "${sf_project_name}")
+<b>Extra images:</b> $(tg escape "${extraimages:-none}")" "Release started"
+
+    tg status-reset
+    tg status "Building"
 
     [[ -d "${ANDROID_BUILD_TOP}/ota" ]] && rm -rf "${ANDROID_BUILD_TOP}/ota"
     git clone git@github.com:loonage/ota.git "${ANDROID_BUILD_TOP}/ota"
@@ -77,14 +125,21 @@ release() {
     breakfast "${device}"
     m installclean
 
+    build_failed=""
     if [[ -n "${extraimages}" ]]; then
         echo -e "\e[32m[INFO]\e[0m Running m bacon with extraimages for ${device}"
-        telegram "[INFO] Running m bacon with extraimages for ${device}"
-        m "${extraimages}" bacon
+        m "${extraimages}" bacon || build_failed=1
     else
         echo -e "\e[32m[INFO]\e[0m Running m bacon for ${device}"
-        telegram "[INFO] Running m bacon for ${device}"
-        m bacon
+        m bacon || build_failed=1
+    fi
+
+    if [ -n "${build_failed}" ]; then
+        echo -e "\e[31m[ERROR]\e[0m Build failed for ${device_variant}."
+        tg status "Build failed"
+        tg error "Build failed for ${device_variant}. Check the build log."
+        cd "${ANDROID_BUILD_TOP}"
+        return 1
     fi
 
     get_prop() {
@@ -106,8 +161,16 @@ release() {
 
     if [ -z "$tag_name" ]; then
         echo -e "\e[31m[ERROR]\e[0m Failed to extract tag_name (date) from filename: ${filename}"
-        telegram "[ERROR] Failed to extract tag_name (date) from filename: ${filename}"
+        tg error "Failed to extract build date from filename: ${filename}"
         exit 1
+    fi
+
+    if [ ! -f "${OUT}/${filename}" ]; then
+        echo -e "\e[31m[ERROR]\e[0m Build reported success but ${OUT}/${filename} is missing."
+        tg status "Build failed"
+        tg error "Build produced no package for ${device_variant}: ${filename} is missing."
+        cd "${ANDROID_BUILD_TOP}"
+        return 1
     fi
 
     metadata=$(unzip -p "${OUT}/${filename}" META-INF/com/android/metadata 2>/dev/null)
@@ -128,16 +191,17 @@ release() {
 
     if [ -z "${os_sdk_level}" ]; then
         echo -e "\e[31m[ERROR]\e[0m Failed to read post-sdk-level from ${filename} metadata."
-        telegram "[ERROR] Failed to read post-sdk-level from ${filename} metadata."
+        tg error "Failed to read post-sdk-level from ${filename} metadata."
         exit 1
     fi
 
     if [ -z "${ota_property_files}" ]; then
         echo -e "\e[33m[WARN]\e[0m ota-property-files missing from ${filename} metadata. Streaming updates will be unavailable."
-        telegram "[WARN] ota-property-files missing from ${filename} metadata. Streaming updates will be unavailable."
+        tg warn "ota-property-files missing from ${filename} metadata. Streaming updates will be unavailable."
     fi
 
     release_url="https://sourceforge.net/projects/${sf_project_name}/files/los/${tag_name}/$(basename ${filename})/download"
+    folder_url="https://sourceforge.net/projects/${sf_project_name}/files/los/${tag_name}"
     ota_entry=$(jq -n \
         --argjson datetime "${datetime}" \
         --arg filename "${filename}" \
@@ -170,7 +234,6 @@ release() {
 
     echo -e "\e[32m[INFO]\e[0m Generated OTA JSON entry:"
     echo "${ota_entry}"
-    telegram "[INFO] Generated OTA JSON entry for ${device_variant}: ${ota_entry}"
 
     rm -f "${device_variant}.json"
     echo "${ota_entry}" > "${device_variant}.json"
@@ -186,20 +249,20 @@ release() {
 
         if [[ -n "${pr_url}" ]]; then
             echo -e "\e[32m[INFO]\e[0m PR created for ${device_variant}: $pr_url"
-            telegram "[INFO] PR created for ${device_variant}: $pr_url"
+            tg status "PR opened, uploading build"
         else
             echo -e "\e[31m[ERROR]\e[0m Failed to retrieve PR URL. PR creation may have failed."
-            telegram "[ERROR] Failed to retrieve PR URL. PR creation may have failed."
+            tg error "Failed to retrieve PR URL. PR creation may have failed."
+            tg code "OTA JSON for ${device_variant}" "${ota_entry}"
         fi
     else
         echo -e "\e[31m[ERROR]\e[0m No commits found in ${pr_branch}. Aborting PR creation."
-        telegram "[ERROR] No commits found in ${pr_branch}. Aborting PR creation."
+        tg error "No commits found in ${pr_branch}. Aborting PR creation."
         exit 1
     fi
 
     cd ..
     echo -e "\e[32m[INFO]\e[0m Deleting the OTA repo from ${ANDROID_BUILD_TOP}/ota."
-    telegram "[INFO] Deleting the OTA repo from ${ANDROID_BUILD_TOP}/ota."
     rm -rf "${ANDROID_BUILD_TOP}/ota"
 
     {
@@ -221,14 +284,9 @@ release() {
     if [ -n "${extraimages}" ]; then
         extraimages=$(echo "${extraimages}" | xargs)
         echo "[INFO] Initial extraimages value: ${extraimages}"
-        telegram "[INFO] Initial extraimages value: ${extraimages}"
+        tg status "Uploading extra images"
 
         images=$(echo "${extraimages}" | grep -oP '\b\w*image\w*\b')
-
-        echo "[INFO] Processing extra images:"
-        echo "${images}"
-        telegram "[INFO] Processing extra images:"
-        telegram "${images}"
 
         while IFS= read -r image; do
             if [[ -v "image_map[${image}]" ]]; then
@@ -236,46 +294,50 @@ release() {
                 if [ -f "${image_path}" ]; then
                     remote_file="$(basename "${image_path}")"
                     remote_path="/home/frs/project/${sf_project_name}/los/${tag_name}/${remote_file}"
+                    tg status "Uploading extra images — ${remote_file}"
                     echo "[INFO] Checking size of ${remote_file} on the server at path: ${remote_path}"
-                    telegram "[INFO] Checking size of ${remote_file} on the server at path: ${remote_path}"
                     rsync_output=$(rsync --dry-run -avz "adarshgrewal@frs.sourceforge.net:${remote_path}" 2>&1)
 
                     if echo "${rsync_output}" | grep -q 'No such file or directory'; then
                         echo "[INFO] ${remote_file} not found on the server at path: ${remote_path}. Proceeding with upload."
-                        telegram "[INFO] ${remote_file} not found on the server at path: ${remote_path}. Proceeding with upload."
                         rsync -Ph "${image_path}" "adarshgrewal@frs.sourceforge.net:${remote_path}"
                     else
                         remote_size=$(echo "${rsync_output}" | grep -oP '(\d+) bytes' | awk '{print $1}')
                         
                         if [ -n "${remote_size}" ]; then
                             echo "[INFO] Found ${remote_file} on server at path ${remote_path} with size: ${remote_size} bytes."
-                            telegram "[INFO] Found ${remote_file} on server at path ${remote_path} with size: ${remote_size} bytes."
                             if [ "${remote_size}" -gt 0 ]; then
                                 echo "[INFO] ${remote_file} already exists and is non-zero. Skipping upload."
-                                telegram "[INFO] ${remote_file} already exists and is non-zero. Skipping upload."
                             fi
                         else
                             echo "[ERROR] Failed to extract size for ${remote_file} from rsync output."
-                            telegram "[ERROR] Failed to extract size for ${remote_file} from rsync output."
+                            tg error "Failed to extract size for ${remote_file} from rsync output."
                         fi
                     fi
                 else
                     echo "[ERROR] ${image_path} not found in ${OUT}"
-                    telegram "[ERROR] ${image_path} not found in ${OUT}"
+                    tg error "${image_path} not found in ${OUT}"
                 fi
             else
                 echo "[ERROR] Unknown extra image: $image"
-                telegram "[ERROR]Unknown extra image: $image"
+                tg error "Unknown extra image: ${image}"
             fi
         done <<< "${images}"
     else
         echo "[INFO] No extra images to process."
-        telegram "[INFO] No extra images to process for ${device_variant}."
-
     fi
 
     echo -e "\e[32m[INFO]\e[0m Release created successfully!"
-    telegram "[INFO] Release created successfully for ${device_variant}."
+    if [ -n "${pr_url}" ]; then
+        tg status-html "<b>PR:</b> <a href=\"$(tg escape "${pr_url}")\">view on GitHub</a>"
+    fi
+
+    tg send "<b>Build:</b> <code>$(tg escape "${filename}")</code>
+<b>Version:</b> $(tg escape "${version}")
+<b>Patch level:</b> $(tg escape "${os_patch_level:-unknown}")
+<b>Size:</b> $(( size / 1024 / 1024 )) MiB
+
+<a href=\"$(tg escape "${folder_url}")\">Download</a>" "Release complete — ${device} (${type})"
 }
 
 apply_patches() {
