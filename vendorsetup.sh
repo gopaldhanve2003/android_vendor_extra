@@ -37,7 +37,7 @@ release() {
 
     if [[ "${device}" == "onyx" ]]; then
         sf_project_name="onyxrandom"
-        extraimages="bootimage initbootimage recoveryimage vendorbootimage" 
+        extraimages="bootimage dtboimage initbootimage recoveryimage vendorbootimage" 
     fi
 
     if [[ "${device}" == "zircon" ]]; then
