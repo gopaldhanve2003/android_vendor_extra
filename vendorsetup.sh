@@ -14,9 +14,12 @@ enable_gms() {
 }
 
 TELEGRAM_BIN="/home/adarsh/telegram.sh/telegram"
+TELEGRAM_CHAT="-1004488597982"
+TELEGRAM_TOPIC="32"
 TELEGRAM_PROGRESS_ID=""
 tg() {
     local action="$1"
+    local -a opts=(-c "${TELEGRAM_CHAT}" -o "${TELEGRAM_TOPIC}" -H -D)
 
     case "${action}" in
         escape)
@@ -24,9 +27,9 @@ tg() {
             ;;
         send)
             if [ -n "$3" ]; then
-                "${TELEGRAM_BIN}" -H -D -T "$3" "$2"
+                "${TELEGRAM_BIN}" "${opts[@]}" -T "$3" "$2"
             else
-                "${TELEGRAM_BIN}" -H -D "$2"
+                "${TELEGRAM_BIN}" "${opts[@]}" "$2"
             fi
             ;;
         warn)
@@ -43,9 +46,9 @@ tg() {
             ;;
         status-html)
             if [ -z "${TELEGRAM_PROGRESS_ID}" ]; then
-                TELEGRAM_PROGRESS_ID=$("${TELEGRAM_BIN}" -H -D -p "$2")
+                TELEGRAM_PROGRESS_ID=$("${TELEGRAM_BIN}" "${opts[@]}" -p "$2")
             else
-                "${TELEGRAM_BIN}" -H -D -e "${TELEGRAM_PROGRESS_ID}" "$2" >/dev/null
+                "${TELEGRAM_BIN}" "${opts[@]}" -e "${TELEGRAM_PROGRESS_ID}" "$2" >/dev/null
             fi
             ;;
         status-reset)
