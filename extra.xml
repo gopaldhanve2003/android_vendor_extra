@@ -5,8 +5,6 @@
 
   <!-- extras -->
   <project path="vendor/extra" remote="github" name="AdarshGrewal/android_vendor_extra" revision="lineage-23.2" />
-  <project path="vendor/setup" remote="github" name="AdarshGrewal/android_vendor_setup" revision="lineage-23.2" />
-  <project path="vendor/lineage-priv/keys" remote="github" name="AdarshGrewal/android_vendor_lineage-priv_keys" revision="lineage-23.2" />
 
   <!-- Face unlock -->
   <project path="packages/apps/FaceUnlock" remote="gitlab" name="AdarshGrewal/android_packages_apps_FaceUnlock" revision="lineage-23.0" />
