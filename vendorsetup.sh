@@ -1,6 +1,9 @@
 #!/bin/bash
 # vendorsetup.sh — auto-sourced by `source build/envsetup.sh`
 # Purpose: auto-detect build vars + apply_patches, both always needed.
+# Telegram notifications/progress are optional — only wired in if
+# telegram_notify.sh exists next to this file, so a checkout without it
+# still builds normally, just without notifications.
 
 #######################################
 # 1. Auto-detect ANDROID_BUILD_TOP / PROJECT / RELEASE_VERSION
@@ -50,3 +53,13 @@ apply_patches() {
         cd "${ANDROID_BUILD_TOP}"
     done
 }
+
+#######################################
+# 3. Optional Telegram notifications / progress monitoring.
+#    Only loaded if telegram_notify.sh is present next to this file —
+#    if it's missing, `m` is left untouched and the build still works.
+#######################################
+_VENDORSETUP_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+if [ -f "${_VENDORSETUP_DIR}/telegram_notify.sh" ]; then
+    source "${_VENDORSETUP_DIR}/telegram_notify.sh"
+fi
