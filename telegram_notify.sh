@@ -108,7 +108,7 @@ if declare -f m >/dev/null 2>&1 && ! declare -f _orig_m >/dev/null 2>&1; then
     m() {
         if [[ "$1" == "bacon" ]]; then
             local variant="Vanilla"
-            [ -f "${ANDROID_BUILD_TOP}/vendor/partner_gms/Android.mk" ] && variant="GMS"
+            [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && variant="GMS"
             local label="${PROJECT}-${RELEASE_VERSION} | ${TARGET_DEVICE} (${variant}, ${TARGET_BUILD_VARIANT})"
 
             unset msg_id
