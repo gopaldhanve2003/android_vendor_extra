@@ -11,20 +11,18 @@
 # Telegram notification — direct Bot API, no external script
 #######################################
 notifyMsg() {
-    local msg="$1"
+    local msg="$1" resp
     if [ -z "${msg_id}" ]; then
-        local resp
         resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-               -d chat_id="${TG_CID}" \
-               -d parse_mode="HTML" \
-               -d text="${msg}")
-        msg_id=$(echo "$resp" | jq -r '.result.message_id')
+               -d chat_id="${TG_CID}" -d parse_mode="HTML" -d text="${msg}")
+        msg_id=$(echo "$resp" | jq -r '.result.message_id' 2>/dev/null)
+        [ -z "${msg_id}" ] || [ "${msg_id}" == "null" ] && \
+            echo "[TELEGRAM] send failed: $(echo "$resp" | jq -r '.description // "no response"' 2>/dev/null)" >&2
     else
-        curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" \
-             -d chat_id="${TG_CID}" \
-             -d parse_mode="HTML" \
-             -d message_id="${msg_id}" \
-             -d text="${msg}" > /dev/null 2>&1
+        resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" \
+               -d chat_id="${TG_CID}" -d parse_mode="HTML" -d message_id="${msg_id}" -d text="${msg}")
+        echo "$resp" | jq -e '.ok' >/dev/null 2>&1 || \
+            echo "[TELEGRAM] edit failed: $(echo "$resp" | jq -r '.description // "no response"' 2>/dev/null)" >&2
     fi
 }
 
