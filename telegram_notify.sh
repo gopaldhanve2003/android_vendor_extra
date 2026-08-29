@@ -3,7 +3,7 @@
 # file exists, so a checkout without it still builds fine, just silently.
 # Requires: TG_TOKEN, TG_CID env vars (Telegram bot token + chat id).
 #
-# Reads TARGET_DEVICE / TARGET_BUILD_VARIANT — already exported by
+# Reads TARGET_PRODUCT / TARGET_BUILD_VARIANT — already exported by
 # envsetup.sh's breakfast/lunch by the time `m bacon` runs, so no
 # manual device/variant configuration needed here.
 
@@ -83,7 +83,7 @@ Status: <b>${prog}</b>"
 notify_final() {
     local dl="$1"
     [ -z "${msg_id}" ] && return 0
-    notifyMsg "<b>${PROJECT}-${RELEASE_VERSION} | ${TARGET_DEVICE}</b>
+    notifyMsg "<b>${PROJECT}-${RELEASE_VERSION} | ${TARGET_PRODUCT#*_}</b>
 Status: <b>complete</b>
 Download: ${dl}"
 }
@@ -112,7 +112,8 @@ m() {
     if [[ "$1" == "bacon" ]]; then
         local variant="Vanilla"
         [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && variant="GMS"
-        local label="${PROJECT}-${RELEASE_VERSION} | ${TARGET_DEVICE} (${variant}, ${TARGET_BUILD_VARIANT})"
+        local device="${TARGET_PRODUCT#*_}"
+        local label="${PROJECT}-${RELEASE_VERSION} | ${device} (${variant}, ${TARGET_BUILD_VARIANT})"
 
         unset msg_id
         notifyMsg "<b>${label}</b>
