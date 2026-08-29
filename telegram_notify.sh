@@ -97,44 +97,48 @@ _download_watch() {
 }
 
 #######################################
-# Wrap `m bacon` only — build.sh stays untouched.
-# On failure: Android already writes out/error.log itself — just upload it.
+# Wrap `m bacon`. NOTE: in this AOSP tree `m` is not a bash function —
+# envsetup.sh explicitly `unset`s it and it resolves at call time as
+# the standalone script build/soong/bin/m via PATH (added by
+# breakfast/lunch). So we don't capture/rename an existing `m`
+# function — there isn't one to capture. We just define our own `m`
+# and shell out with `command m`, which bypasses shell functions and
+# finds the real script. This works no matter when it's defined, since
+# it only needs PATH set correctly at call time (after breakfast), not
+# at source time — so no build.sh or vendorsetup.sh ordering changes
+# are needed.
 #######################################
-if declare -f m >/dev/null 2>&1 && ! declare -f _orig_m >/dev/null 2>&1; then
-    eval "$(declare -f m | sed '1s/^m /_orig_m /')"
+m() {
+    if [[ "$1" == "bacon" ]]; then
+        local variant="Vanilla"
+        [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && variant="GMS"
+        local label="${PROJECT}-${RELEASE_VERSION} | ${TARGET_DEVICE} (${variant}, ${TARGET_BUILD_VARIANT})"
 
-    m() {
-        if [[ "$1" == "bacon" ]]; then
-            local variant="Vanilla"
-            [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && variant="GMS"
-            local label="${PROJECT}-${RELEASE_VERSION} | ${TARGET_DEVICE} (${variant}, ${TARGET_BUILD_VARIANT})"
-
-            unset msg_id
-            notifyMsg "<b>${label}</b>
+        unset msg_id
+        notifyMsg "<b>${label}</b>
 Build started"
 
-            _orig_m "$@" > >(tr '\r' '\n' | _progress_stream "${label}") 2>&1
-            local ec=$?
+        command m "$@" > >(tr '\r' '\n' | _progress_stream "${label}") 2>&1
+        local ec=$?
 
-            if [ "${ec}" -eq 0 ]; then
-                unset DOWNLOAD_URL
-                trap '_download_watch' DEBUG
+        if [ "${ec}" -eq 0 ]; then
+            unset DOWNLOAD_URL
+            trap '_download_watch' DEBUG
+        else
+            local err_file="${ANDROID_BUILD_TOP}/out/error.log"
+            local log_url
+            if [ -f "${err_file}" ]; then
+                log_url=$(upload_log "${err_file}") || log_url="(upload failed)"
             else
-                local err_file="${ANDROID_BUILD_TOP}/out/error.log"
-                local log_url
-                if [ -f "${err_file}" ]; then
-                    log_url=$(upload_log "${err_file}") || log_url="(upload failed)"
-                else
-                    log_url="(out/error.log not found)"
-                fi
-
-                notifyMsg "<b>${label}</b>
-Status: <b>failed</b>. Log: ${log_url}"
+                log_url="(out/error.log not found)"
             fi
 
-            return "${ec}"
-        else
-            _orig_m "$@"
+            notifyMsg "<b>${label}</b>
+Status: <b>failed</b>. Log: ${log_url}"
         fi
-    }
-fi
+
+        return "${ec}"
+    else
+        command m "$@"
+    fi
+}
