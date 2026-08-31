@@ -49,23 +49,36 @@ upload_log() {
 }
 
 #######################################
+# Header used by start/progress/failed messages. Reads BUILD_DEVICE /
+# BUILD_VARIANT, set once per invocation in m() below — they outlive
+# m()'s own scope because _download_watch (fired later via a DEBUG
+# trap) needs them too, same lifetime DOWNLOAD_URL already relies on.
+#######################################
+_tg_header() {
+    echo "<b>${PROJECT}-${RELEASE_VERSION}</b>
+Build started for ${BUILD_DEVICE}
+Flavour: ${BUILD_VARIANT} | Release: ${TARGET_BUILD_VARIANT}"
+}
+
+#######################################
 # Progress stream — reads m bacon's stdout live, line by line.
 # `tr '\r' '\n'` normalizes Soong's status output first: it can pack
 # many "\r"-separated updates before a real newline, which would
 # otherwise make `read` return late and match a stale percentage.
-# Throttled to once per 5s so Telegram isn't flooded.
+# Reformats "NN% X/Y" as "NN% (X/Y)". Throttled to once per 5s.
 #######################################
 _progress_stream() {
-    local label="$1"
-    local last_prog="" last_ts=0 line prog now
+    local last_prog="" last_ts=0 line pct frac prog now
 
     while IFS= read -r line; do
         printf '%s\n' "$line"
-        if [[ "$line" =~ ([0-9]+%\ [0-9]+/[0-9]+) ]]; then
-            prog="${BASH_REMATCH[1]}"
+        if [[ "$line" =~ ([0-9]+%)\ ([0-9]+/[0-9]+) ]]; then
+            pct="${BASH_REMATCH[1]}"
+            frac="${BASH_REMATCH[2]}"
+            prog="${pct} (${frac})"
             now=$(date +%s)
             if [[ "$prog" != "$last_prog" && $(( now - last_ts )) -ge 5 ]]; then
-                notifyMsg "<b>${label}</b>
+                notifyMsg "$(_tg_header)
 Status: <b>${prog}</b>"
                 last_prog="$prog"
                 last_ts="$now"
@@ -83,7 +96,7 @@ Status: <b>${prog}</b>"
 notify_final() {
     local dl="$1"
     [ -z "${msg_id}" ] && return 0
-    notifyMsg "<b>${PROJECT}-${RELEASE_VERSION} | ${TARGET_PRODUCT#*_}</b>
+    notifyMsg "$(_tg_header)
 Status: <b>complete</b>
 Download: ${dl}"
 }
@@ -110,16 +123,14 @@ _download_watch() {
 #######################################
 m() {
     if [[ "$1" == "bacon" ]]; then
-        local variant="Vanilla"
-        [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && variant="GMS"
-        local device="${TARGET_PRODUCT#*_}"
-        local label="${PROJECT}-${RELEASE_VERSION} | ${device} (${variant}, ${TARGET_BUILD_VARIANT})"
+        BUILD_VARIANT="Vanilla"
+        [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && BUILD_VARIANT="GMS"
+        BUILD_DEVICE="${TARGET_PRODUCT#*_}"
 
         unset msg_id
-        notifyMsg "<b>${label}</b>
-Build started"
+        notifyMsg "$(_tg_header)"
 
-        command m "$@" > >(tr '\r' '\n' | _progress_stream "${label}") 2>&1
+        command m "$@" > >(tr '\r' '\n' | _progress_stream) 2>&1
         local ec=$?
 
         if [ "${ec}" -eq 0 ]; then
@@ -134,7 +145,7 @@ Build started"
                 log_url="(out/error.log not found)"
             fi
 
-            notifyMsg "<b>${label}</b>
+            notifyMsg "$(_tg_header)
 Status: <b>failed</b>. Log: ${log_url}"
         fi
 
