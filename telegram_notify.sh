@@ -49,10 +49,10 @@ upload_log() {
 }
 
 #######################################
-# Header used by start/progress/failed messages. Reads BUILD_DEVICE /
-# BUILD_VARIANT, set once per invocation in m() below — they outlive
-# m()'s own scope because _download_watch (fired later via a DEBUG
-# trap) needs them too, same lifetime DOWNLOAD_URL already relies on.
+# Header used by start/progress/failed/final messages. BUILD_DEVICE /
+# BUILD_VARIANT are set once per invocation in m() and outlive its
+# scope, since _download_watch (fired later via a DEBUG trap) reads
+# them too — same lifetime DOWNLOAD_URL already relies on.
 #######################################
 _tg_header() {
     echo "<b>${PROJECT}-${RELEASE_VERSION}</b>
@@ -61,43 +61,15 @@ Flavour: ${BUILD_VARIANT} | Release: ${TARGET_BUILD_VARIANT}"
 }
 
 #######################################
-# Progress stream — reads m bacon's stdout live, line by line.
-# `tr '\r' '\n'` normalizes Soong's status output first: it can pack
-# many "\r"-separated updates before a real newline, which would
-# otherwise make `read` return late and match a stale percentage.
-# Reformats "NN% X/Y" as "NN% (X/Y)". Throttled to once per 5s.
-#######################################
-_progress_stream() {
-    local last_prog="" last_ts=0 line pct frac prog now
-
-    while IFS= read -r line; do
-        printf '%s\n' "$line"
-        if [[ "$line" =~ ([0-9]+%)\ ([0-9]+/[0-9]+) ]]; then
-            pct="${BASH_REMATCH[1]}"
-            frac="${BASH_REMATCH[2]}"
-            prog="${pct} (${frac})"
-            now=$(date +%s)
-            if [[ "$prog" != "$last_prog" && $(( now - last_ts )) -ge 5 ]]; then
-                notifyMsg "$(_tg_header)
-Status: <b>${prog}</b>"
-                last_prog="$prog"
-                last_ts="$now"
-            fi
-        fi
-    done
-}
-
-#######################################
 # Final message — appears once build.sh sets $DOWNLOAD_URL after the
-# build finishes. Armed only after a successful `m bacon`, checks
-# before each subsequent command, fires once, then unhooks and cleans
-# up after itself.
+# build finishes. Shows the last-seen percentage with "(completed)"
+# instead of an X/Y fraction, matching the progress message's shape.
 #######################################
 notify_final() {
     local dl="$1"
     [ -z "${msg_id}" ] && return 0
     notifyMsg "$(_tg_header)
-Status: <b>complete</b>
+Status: <b>${LAST_PCT:-100%} (completed)</b>
 Download: ${dl}"
 }
 
@@ -127,14 +99,39 @@ m() {
         [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && BUILD_VARIANT="GMS"
         BUILD_DEVICE="${TARGET_PRODUCT#*_}"
 
-        unset msg_id
+        unset msg_id DOWNLOAD_URL LAST_PCT
         notifyMsg "$(_tg_header)"
 
-        command m "$@" > >(tr '\r' '\n' | _progress_stream) 2>&1
-        local ec=$?
+        # `tr '\r' '\n'` normalizes Soong's \r-packed status lines.
+        # `< <(...)` (not `> >(...)`) keeps this loop in the current
+        # shell so last_pct survives past it, for the failed message
+        # and notify_final below. Sentinel line carries command m's
+        # real exit code via PIPESTATUS[0].
+        local line pct frac prog last_prog="" last_pct="" last_ts=0 now ec
+        while IFS= read -r line; do
+            if [[ "$line" == __M_EXIT__* ]]; then
+                ec="${line#__M_EXIT__}"
+                continue
+            fi
+            printf '%s\n' "$line"
+            if [[ "$line" =~ ([0-9]+%)\ ([0-9]+/[0-9]+) ]]; then
+                pct="${BASH_REMATCH[1]}"
+                frac="${BASH_REMATCH[2]}"
+                prog="${pct} (${frac})"
+                now=$(date +%s)
+                if [[ "$prog" != "$last_prog" && $(( now - last_ts )) -ge 5 ]]; then
+                    notifyMsg "$(_tg_header)
+Status: <b>${prog}</b>"
+                    last_ts="$now"
+                fi
+                last_prog="$prog"
+                last_pct="$pct"
+            fi
+        done < <(command m "$@" 2>&1 | tr '\r' '\n'; echo "__M_EXIT__${PIPESTATUS[0]}")
+
+        LAST_PCT="${last_pct}"
 
         if [ "${ec}" -eq 0 ]; then
-            unset DOWNLOAD_URL
             trap '_download_watch' DEBUG
         else
             local err_file="${ANDROID_BUILD_TOP}/out/error.log"
@@ -146,7 +143,8 @@ m() {
             fi
 
             notifyMsg "$(_tg_header)
-Status: <b>failed</b>. Log: ${log_url}"
+Status: <b>${last_pct:-0%} (failed)</b>
+Log: ${log_url}"
         fi
 
         return "${ec}"
