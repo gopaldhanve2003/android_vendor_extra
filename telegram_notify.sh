@@ -136,8 +136,10 @@ Status: <b>${prog}</b>"
         else
             local err_file="${ANDROID_BUILD_TOP}/out/error.log"
             local log_url
-            if [ -f "${err_file}" ]; then
+            if [ -s "${err_file}" ]; then
                 log_url=$(upload_log "${err_file}") || log_url="(upload failed)"
+            elif [ -f "${err_file}" ]; then
+                log_url="(out/error.log is empty)"
             else
                 log_url="(out/error.log not found)"
             fi
