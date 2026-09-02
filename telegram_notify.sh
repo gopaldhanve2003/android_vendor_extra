@@ -27,7 +27,12 @@ notifyMsg() {
 }
 
 #######################################
-# Log upload to paste.rs
+# Log upload — sent as a Telegram document instead of to paste.rs.
+# Kept as its own function since it hits a different API endpoint
+# (sendDocument, multipart) than notifyMsg's sendMessage/editMessageText.
+# Sent as a reply to $msg_id (the status message) so it's threaded
+# under the build it belongs to, instead of landing as a bare
+# unrelated message in the chat.
 #######################################
 upload_log() {
     local file="$1"
@@ -35,17 +40,13 @@ upload_log() {
         echo "Error: File '$file' not found." >&2
         return 1
     fi
-    local output_url
-    output_url=$(curl --silent --data-binary @"$file" https://paste.rs)
-    if [ -z "$output_url" ]; then
-        if curl --silent --head https://paste.rs > /dev/null; then
-            echo "Error: Upload failed despite paste.rs being up." >&2
-        else
-            echo "Error: Upload failed. paste.rs appears to be down." >&2
-        fi
+    local resp
+    resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendDocument" \
+           -F chat_id="${TG_CID}" -F reply_to_message_id="${msg_id}" -F document=@"${file}")
+    echo "$resp" | jq -e '.ok' >/dev/null 2>&1 || {
+        echo "[TELEGRAM] upload failed: $(echo "$resp" | jq -r '.description // "no response"' 2>/dev/null)" >&2
         return 1
-    fi
-    echo "$output_url"
+    }
 }
 
 #######################################
@@ -134,19 +135,11 @@ Status: <b>${prog}</b>"
         if [ "${ec}" -eq 0 ]; then
             trap '_download_watch' DEBUG
         else
-            local err_file="${ANDROID_BUILD_TOP}/out/error.log"
-            local log_url
-            if [ -s "${err_file}" ]; then
-                log_url=$(upload_log "${err_file}") || log_url="(upload failed)"
-            elif [ -f "${err_file}" ]; then
-                log_url="(out/error.log is empty)"
-            else
-                log_url="(out/error.log not found)"
-            fi
-
             notifyMsg "$(_tg_header)
-Status: <b>${last_pct:-0%} (failed)</b>
-Log: ${log_url}"
+Status: <b>${last_pct:-0%} (failed)</b>"
+
+            local err_file="${ANDROID_BUILD_TOP}/out/error.log"
+            [ -s "${err_file}" ] && upload_log "${err_file}"
         fi
 
         return "${ec}"
