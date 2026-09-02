@@ -55,6 +55,18 @@ apply_patches() {
 }
 
 #######################################
+# 2b. Auto-apply patches on lunch, only when TARGET_PRODUCT is lineage_*
+#######################################
+if declare -f lunch > /dev/null; then
+    eval "_extra_orig_lunch() $(declare -f lunch | tail -n +2)"
+    lunch() {
+        _extra_orig_lunch "$@"
+        [[ "${TARGET_PRODUCT}" == lineage_* ]] || return 0
+        apply_patches
+    }
+fi
+
+#######################################
 # 3. Optional Telegram notifications / progress monitoring.
 #    Only loaded if telegram_notify.sh is present next to this file —
 #    if it's missing, `m` is left untouched and the build still works.
