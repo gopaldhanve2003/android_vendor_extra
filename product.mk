@@ -28,8 +28,7 @@ endif
 
 PRODUCT_PACKAGES += \
     ExtraSettingsResTarget \
-    ExtraUpdaterOverlay \
-    ExtraPIFrameworksResTarget
+    ExtraUpdaterOverlay
 
 # Sysconfig
 PRODUCT_COPY_FILES += \
