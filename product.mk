@@ -15,6 +15,11 @@ PRODUCT_COPY_FILES += \
     frameworks/native/data/etc/android.hardware.biometrics.face.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.biometrics.face.xml
 endif
 
+# GApps
+ifeq ($(WITH_GMS),true)
+$(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
+endif
+
 # Overlay
 ifeq ($(WITH_GMS), true)
 PRODUCT_PACKAGES += \
