@@ -97,7 +97,7 @@ _download_watch() {
 m() {
     if [[ "$1" == "bacon" ]]; then
         BUILD_VARIANT="Vanilla"
-        [ -f "${ANDROID_BUILD_TOP}/vendor/gapps/arm64/arm64-vendor.mk" ] && BUILD_VARIANT="GMS"
+        [ "${WITH_GMS}" = "true" ] && BUILD_VARIANT="GMS"
         BUILD_DEVICE="${TARGET_PRODUCT#*_}"
 
         unset msg_id DOWNLOAD_URL LAST_PCT
