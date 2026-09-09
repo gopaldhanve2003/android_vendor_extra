@@ -1,31 +1,8 @@
-# Pixel
-$(call inherit-product, vendor/pixel/clocks/products/clocks.mk)
-
-# Face Unlock
-TARGET_FACE_UNLOCK_SUPPORTED ?= true
-
-ifeq ($(TARGET_FACE_UNLOCK_SUPPORTED),true)
-PRODUCT_PACKAGES += \
-    FaceUnlock
-
-PRODUCT_SYSTEM_EXT_PROPERTIES += \
-    ro.face.sense_service=true
-
-PRODUCT_COPY_FILES += \
-    frameworks/native/data/etc/android.hardware.biometrics.face.xml:$(TARGET_COPY_OUT_SYSTEM)/etc/permissions/android.hardware.biometrics.face.xml
-endif
-
 # Overlay
 ifeq ($(WITH_GMS), true)
 PRODUCT_PACKAGES += \
     ExtraUpdaterOverlay_GMS
-endif
-
+else
 PRODUCT_PACKAGES += \
-    ExtraSettingsResTarget \
-    ExtraUpdaterOverlay \
-    ExtraPIFrameworksResTarget
-
-# Sysconfig
-PRODUCT_COPY_FILES += \
-    vendor/extra/prebuilt/common/etc/sysconfig/pixel_2016_exclusive.xml:$(TARGET_COPY_OUT_PRODUCT)/etc/sysconfig/pixel_2016_exclusive.xml
+    ExtraUpdaterOverlay
+endif
