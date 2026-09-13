@@ -18,6 +18,7 @@ endif
 # GApps
 ifeq ($(WITH_GMS),true)
 $(call inherit-product, vendor/gapps/arm64/arm64-vendor.mk)
+TARGET_UNOFFICIAL_BUILD_ID := gms
 endif
 
 # Overlay
