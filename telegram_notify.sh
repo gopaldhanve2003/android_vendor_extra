@@ -78,7 +78,6 @@ _download_watch() {
     if [ -n "${DOWNLOAD_URL:-}" ]; then
         notify_final "${DOWNLOAD_URL}"
         trap - DEBUG
-        unset DOWNLOAD_URL
     fi
 }
 
