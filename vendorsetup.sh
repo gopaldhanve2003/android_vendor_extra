@@ -55,13 +55,21 @@ apply_patches() {
 }
 
 #######################################
-# 2b. Auto-apply patches on lunch, only when TARGET_PRODUCT is lineage_*
+# 2b. Auto-apply patches on lunch, and set the gms build id, only when
+#     the requested lunch target is lineage_*
 #######################################
 if declare -f lunch > /dev/null; then
     eval "_extra_orig_lunch() $(declare -f lunch | tail -n +2)"
     lunch() {
+        if [[ "$1" == lineage_* ]]; then
+            if [ "${WITH_GMS}" = "true" ]; then
+                export TARGET_UNOFFICIAL_BUILD_ID=gms
+            else
+                unset TARGET_UNOFFICIAL_BUILD_ID
+            fi
+        fi
         _extra_orig_lunch "$@"
-        [[ "${TARGET_PRODUCT}" == lineage_* ]] || return 0
+        [[ "$1" == lineage_* ]] || return 0
         apply_patches
     }
 fi
