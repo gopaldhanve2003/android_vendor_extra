@@ -1,7 +1,8 @@
 #!/bin/bash
 # telegram_notify.sh — optional. Sourced by vendorsetup.sh only if this
 # file exists, so a checkout without it still builds fine, just silently.
-# Requires: TG_TOKEN, TG_CID env vars (Telegram bot token + chat id).
+# Requires: TG_TOKEN, TG_CID env vars (Telegram bot token + chat id), plus
+# curl and jq (Telegram API calls and parsing its replies).
 #
 # Reads TARGET_PRODUCT / TARGET_BUILD_VARIANT — already exported by
 # envsetup.sh's breakfast/lunch by the time `m bacon` runs, so no
@@ -14,13 +15,13 @@ notifyMsg() {
     local msg="$1" resp
     if [ -z "${msg_id}" ]; then
         resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/sendMessage" \
-               -d chat_id="${TG_CID}" -d parse_mode="HTML" -d text="${msg}")
+               -d chat_id="${TG_CID}" -d parse_mode="HTML" -d link_preview_options='{"is_disabled":true}' -d text="${msg}")
         msg_id=$(echo "$resp" | jq -r '.result.message_id' 2>/dev/null)
         [ -z "${msg_id}" ] || [ "${msg_id}" == "null" ] && \
             echo "[TELEGRAM] send failed: $(echo "$resp" | jq -r '.description // "no response"' 2>/dev/null)" >&2
     else
         resp=$(curl -s -X POST "https://api.telegram.org/bot${TG_TOKEN}/editMessageText" \
-               -d chat_id="${TG_CID}" -d parse_mode="HTML" -d message_id="${msg_id}" -d text="${msg}")
+               -d chat_id="${TG_CID}" -d parse_mode="HTML" -d message_id="${msg_id}" -d link_preview_options='{"is_disabled":true}' -d text="${msg}")
         echo "$resp" | jq -e '.ok' >/dev/null 2>&1 || \
             echo "[TELEGRAM] edit failed: $(echo "$resp" | jq -r '.description // "no response"' 2>/dev/null)" >&2
     fi
@@ -51,32 +52,41 @@ upload_log() {
 
 #######################################
 # Header used by start/progress/failed/final messages. BUILD_DEVICE /
-# BUILD_VARIANT are set once per invocation in m() and outlive its
-# scope, since _download_watch (fired later via a DEBUG trap) reads
-# them too — same lifetime DOWNLOAD_URL already relies on.
+# BUILD_VARIANT / BUILD_TYPE are set once per invocation in m() and
+# outlive its scope, since _download_watch (fired later via a DEBUG trap)
+# reads them too — same lifetime DOWNLOAD_URL already relies on.
+# BUILD_TYPE starts as Production only when RELEASE_PROD is 1|true, but
+# release() (vendorsetup.sh) may change it afterwards — e.g. back to
+# Testing when an OTA PR is still open — so the final message can differ
+# from the first one.
 #######################################
 _tg_header() {
     echo "<b>${PROJECT}-${RELEASE_VERSION}</b>
 Build started for ${BUILD_DEVICE}
-Flavour: ${BUILD_VARIANT} | Release: ${TARGET_BUILD_VARIANT}"
+Flavour: ${BUILD_VARIANT} | Release: ${TARGET_BUILD_VARIANT}
+Type: ${BUILD_TYPE:-Testing}"
 }
 
 #######################################
-# Final message — appears once build.sh sets $DOWNLOAD_URL after the
-# build finishes. Shows the last-seen percentage with "(completed)"
-# instead of an X/Y fraction, matching the progress message's shape.
+# Fallback final message — posted by _download_watch when something other
+# than release() sets $DOWNLOAD_URL after the build finishes. release()
+# posts its own final message and sets REL_FINAL_SENT, so it skips this
+# one. Shows the last-seen percentage with "(completed)" instead of an
+# X/Y fraction, matching the progress message's shape.
 #######################################
 notify_final() {
     local dl="$1"
     [ -z "${msg_id}" ] && return 0
     notifyMsg "$(_tg_header)
 Status: <b>${LAST_PCT:-100%} (completed)</b>
-Download: ${dl}"
+<b><a href=\"${dl}\">DOWNLOAD</a></b>"
 }
 
 _download_watch() {
     if [ -n "${DOWNLOAD_URL:-}" ]; then
-        notify_final "${DOWNLOAD_URL}"
+        # release() in vendorsetup.sh sets REL_FINAL_SENT after posting its
+        # own final message (e.g. prod: download + PR link) — don't overwrite.
+        [ -n "${REL_FINAL_SENT:-}" ] || notify_final "${DOWNLOAD_URL}"
         trap - DEBUG
     fi
 }
@@ -90,8 +100,8 @@ _download_watch() {
 # and shell out with `command m`, which bypasses shell functions and
 # finds the real script. This works no matter when it's defined, since
 # it only needs PATH set correctly at call time (after breakfast), not
-# at source time — so no build.sh or vendorsetup.sh ordering changes
-# are needed.
+# at source time — so no ordering changes in the build script (breakfast /
+# release) or vendorsetup.sh are needed.
 #######################################
 m() {
     if [[ "$1" == "bacon" ]]; then
@@ -99,7 +109,10 @@ m() {
         [ "${WITH_GMS}" = "true" ] && BUILD_VARIANT="GMS"
         BUILD_DEVICE="${TARGET_PRODUCT#*_}"
 
-        unset msg_id DOWNLOAD_URL LAST_PCT
+        unset msg_id DOWNLOAD_URL LAST_PCT REL_FINAL_SENT
+        # Production vs Testing; release() in vendorsetup.sh refines it later
+        # (a prod request can be downgraded, e.g. an OTA PR is still open)
+        case "${RELEASE_PROD:-}" in 1|true) BUILD_TYPE="Production" ;; *) BUILD_TYPE="Testing" ;; esac   # same values release() accepts
         notifyMsg "$(_tg_header)"
 
         local log_file
