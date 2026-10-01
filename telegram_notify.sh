@@ -102,32 +102,46 @@ m() {
         unset msg_id DOWNLOAD_URL LAST_PCT
         notifyMsg "$(_tg_header)"
 
-        # `tr '\r' '\n'` normalizes Soong's \r-packed status lines.
-        # `< <(...)` (not `> >(...)`) keeps this loop in the current
-        # shell so last_pct survives past it, for the failed message
-        # and notify_final below. Sentinel line carries command m's
-        # real exit code via PIPESTATUS[0].
-        local line pct frac prog last_prog="" last_pct="" last_ts=0 now ec
-        while IFS= read -r line; do
-            if [[ "$line" == __M_EXIT__* ]]; then
-                ec="${line#__M_EXIT__}"
-                continue
-            fi
-            printf '%s\n' "$line"
-            if [[ "$line" =~ ([0-9]+%)\ ([0-9]+/[0-9]+) ]]; then
-                pct="${BASH_REMATCH[1]}"
-                frac="${BASH_REMATCH[2]}"
-                prog="${pct} (${frac})"
+        local log_file
+        log_file=$(mktemp)
+
+        ( set -o pipefail; command m "$@" 2>&1 | tee "${log_file}" ) &
+        local build_pid=$!
+
+        local prog last_prog="" last_pct="" last_ts=0 now ec
+        while :; do
+            prog=$(
+                grep -Po '\d+% \d+/\d+' "${log_file}" |
+                tail -n1 |
+                sed -e 's/ / \(/' -e 's/$/)/'
+            )
+
+            if [[ -n "${prog}" && "${prog}" != "${last_prog}" ]]; then
+                last_pct="${prog%% *}"
                 now=$(date +%s)
-                if [[ "$prog" != "$last_prog" && $(( now - last_ts )) -ge 5 ]]; then
+                if (( now - last_ts >= 5 )); then
                     notifyMsg "$(_tg_header)
 Status: <b>${prog}</b>"
-                    last_ts="$now"
+                    last_ts="${now}"
                 fi
-                last_prog="$prog"
-                last_pct="$pct"
+                last_prog="${prog}"
             fi
-        done < <(command m "$@" 2>&1 | tr '\r' '\n'; echo "__M_EXIT__${PIPESTATUS[0]}")
+
+            kill -0 "${build_pid}" 2>/dev/null || break
+
+            sleep 1
+        done
+
+        wait "${build_pid}"
+        ec=$?
+
+        prog=$(
+            grep -Po '\d+% \d+/\d+' "${log_file}" |
+            tail -n1 |
+            sed -e 's/ / \(/' -e 's/$/)/'
+        )
+        [ -n "${prog}" ] && last_pct="${prog%% *}"
+        rm -f "${log_file}"
 
         LAST_PCT="${last_pct}"
 
