@@ -85,7 +85,8 @@ unset _tg
 #    default: test upload (gofile, or your test_upload() hook)
 #    RELEASE_PROD=1|true: zip + $RELEASE_IMAGES go to a GitHub release on $OTA_REPO
 #    (tag <device>-<UTC date_time>), and the OTA json goes in a PR from branch
-#    ota-<device>[_gms]. While that PR is open, production falls back to a test upload.
+#    ota-<device>[_gms]. If that PR is open or a production step fails, it falls back to a
+#    test upload (reason in the status) and the unused GitHub release is deleted.
 #    Env: OTA_REPO, OTA_BASE (default main), GITHUB_TOKEN, RELEASE_IMAGES (e.g.
 #    "recoveryimage", must exist in $OUT), GOFILE_TOKEN (optional), NAME/MAIL (git identity).
 #    Needs: jq, curl, unzip, git.
@@ -124,6 +125,15 @@ rel_curl() { curl -sS -K - "$@" <<< "header = \"Authorization: Bearer ${GITHUB_T
 rel_cred() {
     GITHUB_TOKEN="${GITHUB_TOKEN}" GIT_TERMINAL_PROMPT=0 git -c credential.helper= \
         -c credential.helper='!f() { echo username=x-access-token; echo "password=${GITHUB_TOKEN}"; }; f' "$@"
+}
+
+# rel_gh_unpublish <tag> — deletes the release and its tag (a release deletion leaves the tag)
+rel_gh_unpublish() {
+    local tag="$1" id
+    id=$(rel_curl "${REL_API}/releases/tags/${tag}" | jq -r '.id // empty')
+    [ -n "${id}" ] && rel_curl -X DELETE "${REL_API}/releases/${id}" >/dev/null
+    rel_curl -X DELETE "${REL_API}/git/refs/tags/${tag}" >/dev/null
+    rel_log WARN "Deleted release ${tag} from ${OTA_REPO}."
 }
 
 # rel_gh_publish <tag> <zip> — creates the release, uploads the zip and each $RELEASE_IMAGES
@@ -238,24 +248,24 @@ rel_ota_pr() (
     trap "rm -rf '${dir}'" EXIT
 
     rel_cred clone -q "https://github.com/${OTA_REPO}.git" "${dir}" ||
-        { rel_log ERROR "Failed to clone ${OTA_REPO}."; echo "release uploaded, OTA json failed"; return 1; }
+        { rel_log ERROR "Failed to clone ${OTA_REPO}."; echo "OTA json failed"; return 1; }
     cd "${dir}" || return 1
     rel_cred checkout -q -B "${branch}" "origin/${branch}" 2>/dev/null ||
     rel_cred checkout -q -B "${branch}" "origin/${OTA_BASE}" || {
         rel_log ERROR "Could not find branch ${branch} or ${OTA_BASE} (does ${OTA_BASE} have a first commit?)."
-        echo "release uploaded, OTA json failed"; return 1
+        echo "OTA json failed"; return 1
     }
 
     echo "${entry}" > "${json}"
     rel_cred add "${json}"
     if rel_cred diff --cached --quiet; then
         rel_log WARN "${json} unchanged, no PR needed."
-        echo "release complete - json unchanged"; return 0
+        echo "json unchanged"; return 1
     fi
     { rel_cred -c user.name="${NAME}" -c user.email="${MAIL}" commit -q -m "${title}" &&
       rel_cred push -q origin "${branch}"; } || {
         rel_log ERROR "git push failed."
-        echo "release uploaded, PR failed"; return 1
+        echo "PR failed"; return 1
     }
 
     resp=$(rel_curl -X POST "${REL_API}/pulls" \
@@ -265,7 +275,7 @@ rel_ota_pr() (
     [ -n "${pr_url}" ] || {
         rel_log ERROR "Failed to open PR. Check GITHUB_TOKEN scope/permissions."
         echo "${resp}" >&2
-        echo "release uploaded, PR failed"; return 1
+        echo "PR failed"; return 1
     }
     rel_log INFO "PR: ${pr_url}"
     rel_link "${pr_url}" "ready to release"
@@ -273,7 +283,7 @@ rel_ota_pr() (
 
 # release <device> — see the notes at the top of this section
 release() {
-    local device="$1" prod="" reason="" zip json branch tag dl ota_entry status rc=0
+    local device="$1" prod="" reason="" fail="" zip json branch tag dl ota_entry status rc=0
     case "${device}" in
         ""|-*) echo "Usage: release <device>   (RELEASE_PROD=1 or true for production, default: test upload)"; return 1 ;;
     esac
@@ -295,6 +305,25 @@ release() {
         [ -n "${reason}" ] && { rel_log WARN "Switching to TEST."; prod=""; BUILD_TYPE="Testing"; }
     fi
 
+    # PROD: GitHub release, then OTA json -> PR. A failed step falls through to the test upload.
+    if [ -n "${prod}" ]; then
+        rel_log INFO "Release for ${device}: PRODUCTION (GitHub + PR)"
+        rel_status "uploading to GitHub"
+        tag="${device}-$(date -u +%Y%m%d_%H%M%S)"
+        if ! dl=$(rel_gh_publish "${tag}" "${zip}"); then
+            fail="GitHub upload failed"
+        elif ! ota_entry=$(rel_ota_entry "${zip}" "${dl}"); then
+            fail="OTA json failed"
+        elif ! status=$(rel_ota_pr "${device}" "${json}" "${branch}" "${ota_entry}"); then
+            fail="${status:-PR failed}"
+        fi
+        if [ -n "${fail}" ]; then
+            rel_log WARN "Production failed (${fail}). Switching to TEST."
+            prod=""; BUILD_TYPE="Testing"; reason="switched to testing as ${fail}"; rc=1
+        fi
+    fi
+
+    # TEST: gofile (or your test_upload hook)
     if [ -z "${prod}" ]; then
         rel_log INFO "Release for ${device}: TEST"
         if declare -f test_upload >/dev/null; then
@@ -303,19 +332,14 @@ release() {
             dl=$({ [ -z "${GOFILE_TOKEN}" ] || echo "header = \"Authorization: Bearer ${GOFILE_TOKEN}\""; } |
                 curl -s -S -K - -F "file=@${zip}" https://upload.gofile.io/uploadfile | jq -r '.data.downloadPage // empty')
         fi
-        [ -n "${dl}" ] || { rel_log ERROR "Test upload failed."; return 1; }
+        [ -n "${fail}" ] && rel_gh_unpublish "${tag}"   # the unused production release
+        if [ -z "${dl}" ]; then
+            rel_log ERROR "Test upload failed."
+            rel_status "${fail:+production failed (${fail}), }test upload failed"
+            return 1
+        fi
         rel_log INFO "Uploaded (test): ${dl}"
         status="${reason:-ready to test}"
-    else
-        rel_log INFO "Release for ${device}: PRODUCTION (GitHub + PR)"
-        rel_status "uploading to GitHub"
-        tag="${device}-$(date -u +%Y%m%d_%H%M%S)"
-        dl=$(rel_gh_publish "${tag}" "${zip}") || { rel_status "failed - GitHub release/upload"; return 1; }
-        if ota_entry=$(rel_ota_entry "${zip}" "${dl}"); then
-            status=$(rel_ota_pr "${device}" "${json}" "${branch}" "${ota_entry}") || rc=1
-        else
-            status="release uploaded, OTA json failed"; rc=1
-        fi
     fi
 
     rel_status "${status}" "<b>$(rel_link "${dl}" DOWNLOAD)</b>"
