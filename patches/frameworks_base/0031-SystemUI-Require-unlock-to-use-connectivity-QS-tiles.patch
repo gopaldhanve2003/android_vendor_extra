@@ -1,0 +1,116 @@
+From 55ee7958eaa3586ca92eec8e1de03001354be8c4 Mon Sep 17 00:00:00 2001
+From: Gopal Dhanve <gopaldhanve2003@users.noreply.github.com>
+Date: Mon, 5 Oct 2026 05:31:51 +0000
+Subject: [PATCH] SystemUI: Require unlock to use connectivity QS tiles on a
+ secure lock screen
+
+Airplane mode, Internet, Wi-Fi, mobile data and Hotspot tiles could be
+toggled from a locked screen without authenticating.
+
+Behave like LocationTile: on a secure lock screen, tapping one of these
+tiles shows the unlock screen first (postQSRunnableDismissingKeyguard) and
+the action runs only after a successful unlock. Done once in QSTileImpl
+instead of per tile, using the cached KeyguardStateController. The tile's
+Expandable and the log state are captured before the deferral, since the
+Message is recycled after handleMessage returns. Bluetooth and Location
+are left alone.
+---
+ .../systemui/qs/tileimpl/QSTileImpl.java      | 46 +++++++++++++++++--
+ 1 file changed, 42 insertions(+), 4 deletions(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java b/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java
+index 68d1f8c12..9f2ec8a27 100644
+--- a/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java
++++ b/packages/SystemUI/src/com/android/systemui/qs/tileimpl/QSTileImpl.java
+@@ -70,12 +70,16 @@ import com.android.systemui.qs.QSHost;
+ import com.android.systemui.qs.QsEventLogger;
+ import com.android.systemui.qs.SideLabelTileLayout;
+ import com.android.systemui.qs.logging.QSLogger;
++import com.android.systemui.statusbar.policy.KeyguardStateController;
+ 
+ import java.io.PrintWriter;
+ import java.util.Objects;
++import java.util.Set;
+ import java.util.concurrent.atomic.AtomicBoolean;
+ import java.util.concurrent.atomic.AtomicInteger;
+ 
++import javax.inject.Inject;
++
+ /**
+  * Base quick-settings tile, extend this to create a new tile.
+  *
+@@ -97,6 +101,10 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
+     private static final int READY_STATE_READYING = 1;
+     private static final int READY_STATE_READY = 2;
+ 
++    /** Tiles that need an unlock first on a secure lock screen, like {@code LocationTile}. */
++    private static final Set<String> SECURE_TILE_SPECS =
++            Set.of("airplane", "internet", "wifi", "cell", "hotspot");
++
+     protected final QSHost mHost;
+     protected final Context mContext;
+     // @NonFinalForTesting
+@@ -105,6 +113,7 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
+     private final ArraySet<Object> mListeners = new ArraySet<>();
+     private final MetricsLogger mMetricsLogger;
+     private final StatusBarStateController mStatusBarStateController;
++    @Nullable private KeyguardStateController mKeyguardStateController;
+     protected final ActivityStarter mActivityStarter;
+     private final UiEventLogger mUiEventLogger;
+     private final FalsingManager mFalsingManager;
+@@ -291,6 +300,26 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
+         mHandler.sendEmptyMessage(H.REMOVE_CALLBACKS);
+     }
+ 
++    // Member injection: avoids adding a constructor parameter to every tile subclass.
++    @Inject
++    void injectKeyguardStateController(KeyguardStateController keyguardStateController) {
++        mKeyguardStateController = keyguardStateController;
++    }
++
++    /**
++     * Runs {@code action} now or, for a gated tile on a secure lock screen, only after the user
++     * unlocks, the same way {@code LocationTile} does it.
++     */
++    private void runOrDeferUntilUnlocked(Runnable action) {
++        final KeyguardStateController keyguard = mKeyguardStateController;
++        if (keyguard == null || !SECURE_TILE_SPECS.contains(mTileSpec)
++                || !keyguard.isMethodSecure() || !keyguard.isShowing()) {
++            action.run();
++            return;
++        }
++        mActivityStarter.postQSRunnableDismissingKeyguard(() -> mHandler.post(action));
++    }
++
+     @Override
+     public void click(@Nullable Expandable expandable) {
+         mMetricsLogger.write(populate(new LogMaker(ACTION_QS_CLICK).setType(TYPE_ACTION)
+@@ -630,13 +659,22 @@ public abstract class QSTileImpl<TState extends State> implements QSTile, Lifecy
+                                 mEnforcedAdmin);
+                         mActivityStarter.postStartActivityDismissingKeyguard(intent, 0);
+                     } else {
+-                        mQSLogger.logHandleClick(mTileSpec, msg.arg1);
+-                        handleClick((Expandable) msg.obj);
++                        // Capture now: msg is recycled once handleMessage returns.
++                        final Expandable expandable = (Expandable) msg.obj;
++                        final int eventState = msg.arg1;
++                        runOrDeferUntilUnlocked(() -> {
++                            mQSLogger.logHandleClick(mTileSpec, eventState);
++                            handleClick(expandable);
++                        });
+                     }
+                 } else if (msg.what == SECONDARY_CLICK) {
+                     name = "handleSecondaryClick";
+-                    mQSLogger.logHandleSecondaryClick(mTileSpec, msg.arg1);
+-                    handleSecondaryClick((Expandable) msg.obj);
++                    final Expandable expandable = (Expandable) msg.obj;
++                    final int eventState = msg.arg1;
++                    runOrDeferUntilUnlocked(() -> {
++                        mQSLogger.logHandleSecondaryClick(mTileSpec, eventState);
++                        handleSecondaryClick(expandable);
++                    });
+                 } else if (msg.what == LONG_CLICK) {
+                     name = "handleLongClick";
+                     mQSLogger.logHandleLongClick(mTileSpec, msg.arg1);
+-- 
+2.43.0
