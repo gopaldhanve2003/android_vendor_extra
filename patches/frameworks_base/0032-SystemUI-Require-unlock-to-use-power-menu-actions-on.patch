@@ -1,0 +1,133 @@
+From bc7a7246f8d97c5ca4ff8bdc1fdb094ad8c666ea Mon Sep 17 00:00:00 2001
+From: Gopal Dhanve <gopaldhanve2003@users.noreply.github.com>
+Date: Mon, 5 Oct 2026 05:43:55 +0000
+Subject: [PATCH] SystemUI: Require unlock to use power menu actions on a
+ secure lock screen
+
+Power off, Restart and the advanced restart entries stay visible on the
+lock screen, but pressing or long pressing them acted immediately without
+authenticating.
+
+On a secure lock screen, show the unlock screen first and run the action
+only after a successful unlock, the way LocationTile does. The check is a
+single helper in GlobalActionsDialogLite wrapping every shutdown and
+reboot call, using the cached KeyguardStateController.
+---
+ .../GlobalActionsDialogLite.java              | 32 +++++++++++++------
+ 1 file changed, 22 insertions(+), 10 deletions(-)
+
+diff --git a/packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialogLite.java b/packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialogLite.java
+index 2a12c0d59..40dd72c5f 100644
+--- a/packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialogLite.java
++++ b/packages/SystemUI/src/com/android/systemui/globalactions/GlobalActionsDialogLite.java
+@@ -654,6 +654,18 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+         return action.shouldShow();
+     }
+ 
++    /**
++     * Runs {@code action} now or, on a secure lock screen, only after the user unlocks. The power
++     * menu stays visible on the lock screen, but its actions need authentication.
++     */
++    private void runAfterUnlock(Runnable action) {
++        if (mKeyguardStateController.isMethodSecure() && mKeyguardStateController.isShowing()) {
++            mActivityStarter.postQSRunnableDismissingKeyguard(action);
++        } else {
++            action.run();
++        }
++    }
++
+     private boolean shouldShowRestartSubmenu() {
+         return PowerMenuUtils.isAdvancedRestartPossible(mContext);
+     }
+@@ -1035,7 +1047,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+             mUiEventLogger.log(GlobalActionsEvent.GA_SHUTDOWN_LONG_PRESS);
+             if (!mUserManager.hasUserRestriction(UserManager.DISALLOW_SAFE_BOOT,
+                     getCurrentUser().getUserHandle())) {
+-                mWindowManagerFuncs.reboot(true, null);
++                runAfterUnlock(() -> mWindowManagerFuncs.reboot(true, null));
+                 return true;
+             }
+             return false;
+@@ -1060,7 +1072,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+             }
+             mUiEventLogger.log(GlobalActionsEvent.GA_SHUTDOWN_PRESS);
+             // shutdown by making sure radio and power are handled accordingly.
+-            mWindowManagerFuncs.shutdown();
++            runAfterUnlock(mWindowManagerFuncs::shutdown);
+         }
+     }
+ 
+@@ -1187,7 +1199,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+             mUiEventLogger.log(GlobalActionsEvent.GA_REBOOT_LONG_PRESS);
+             if (!mUserManager.hasUserRestriction(UserManager.DISALLOW_SAFE_BOOT,
+                     getCurrentUser().getUserHandle())) {
+-                mWindowManagerFuncs.reboot(true, null);
++                runAfterUnlock(() -> mWindowManagerFuncs.reboot(true, null));
+                 return true;
+             }
+             return false;
+@@ -1214,7 +1226,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+             if (mDialog != null && shouldShowRestartSubmenu()) {
+                 mDialog.showRestartOptionsMenu();
+             } else {
+-                mWindowManagerFuncs.reboot(false, null);
++                runAfterUnlock(() -> mWindowManagerFuncs.reboot(false, null));
+             }
+         }
+     }
+@@ -1228,7 +1240,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+         @Override
+         public boolean onLongPress() {
+             if (!mUserManager.hasUserRestriction(UserManager.DISALLOW_SAFE_BOOT)) {
+-                mWindowManagerFuncs.reboot(true, null);
++                runAfterUnlock(() -> mWindowManagerFuncs.reboot(true, null));
+                 return true;
+             }
+             return false;
+@@ -1246,7 +1258,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+ 
+         @Override
+         public void onPress() {
+-            mWindowManagerFuncs.reboot(false, null);
++            runAfterUnlock(() -> mWindowManagerFuncs.reboot(false, null));
+         }
+     }
+ 
+@@ -1268,7 +1280,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+ 
+         @Override
+         public void onPress() {
+-            mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_RECOVERY);
++            runAfterUnlock(() -> mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_RECOVERY));
+         }
+     }
+ 
+@@ -1290,7 +1302,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+ 
+         @Override
+         public void onPress() {
+-            mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_BOOTLOADER);
++            runAfterUnlock(() -> mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_BOOTLOADER));
+         }
+     }
+ 
+@@ -1312,7 +1324,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+ 
+         @Override
+         public void onPress() {
+-            mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_FASTBOOT);
++            runAfterUnlock(() -> mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_FASTBOOT));
+         }
+     }
+ 
+@@ -1334,7 +1346,7 @@ public class GlobalActionsDialogLite implements DialogInterface.OnDismissListene
+ 
+         @Override
+         public void onPress() {
+-            mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_DOWNLOAD);
++            runAfterUnlock(() -> mWindowManagerFuncs.reboot(false, PowerManager.REBOOT_DOWNLOAD));
+         }
+     }
+ 
+-- 
+2.43.0
