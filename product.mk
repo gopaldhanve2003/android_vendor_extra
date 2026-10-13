@@ -29,7 +29,3 @@ endif
 PRODUCT_PACKAGES += \
     ExtraSettingsResTarget \
     ExtraUpdaterOverlay
-
-# Spoofify
-PRODUCT_PACKAGES += \
-    Spoofify
