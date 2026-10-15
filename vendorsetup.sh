@@ -27,7 +27,7 @@ if [ -d "${ANDROID_BUILD_TOP}/.repo" ]; then
 fi
 
 #######################################
-# 2. Apply local patches (vendor/extra/patches/<path_with_underscores>/*.patch)
+# 2. Apply local patches (vendor/extra/patches/<real/project/path>/*.patch
 #######################################
 apply_patches() {
     local patches_path="${ANDROID_BUILD_TOP}/vendor/extra/patches"
@@ -36,22 +36,20 @@ apply_patches() {
         return 1
     fi
 
-    local patch_dir project_name project_path
-    for patch_dir in "${patches_path}"/*/; do
-        patch_dir="${patch_dir%/}"
-        project_name="${patch_dir##*/}"
-        project_path="${project_name//_//}"
+    local patch_dir project_path
+    while IFS= read -r -d '' patch_dir; do
+        project_path="${patch_dir#"${patches_path}"/}"
         cd "${ANDROID_BUILD_TOP}/${project_path}" 2>/dev/null || {
             echo "[ERROR] ${project_path} not found. Skipping."
             continue
         }
-        echo "[INFO] Applying patches for ${project_name} on $(git rev-parse --short HEAD)"
+        echo "[INFO] Applying patches for ${project_path} on $(git rev-parse --short HEAD)"
         if ! git am "${patch_dir}"/*.patch --no-gpg-sign; then
-            echo "[ERROR] Failed to apply patches for ${project_name}. Aborting am."
+            echo "[ERROR] Failed to apply patches for ${project_path}. Aborting am."
             git am --abort &> /dev/null
         fi
         cd "${ANDROID_BUILD_TOP}" || return
-    done
+    done < <(find "${patches_path}" -type f -iname '*.patch' -printf '%h\0' | sort -zu)
 }
 
 # lunch wrapper: for lineage_* targets only, set/unset the gms build id before lunch and
