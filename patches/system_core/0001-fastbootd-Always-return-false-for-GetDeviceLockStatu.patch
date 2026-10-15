@@ -1,9 +1,13 @@
-From 55729a3b932d020a1cb35c0baa06202febca5454 Mon Sep 17 00:00:00 2001
+From 674023a6180033c5651128032a39d25b2171cd68 Mon Sep 17 00:00:00 2001
 From: Mashopy <eliasgheeraert@gmail.com>
-Date: Sat, 23 Aug 2025 07:15:29 +0200
-Subject: [PATCH 2/2] fastbootd: Always return false for GetDeviceLockStatus()
+Date: Mon, 12 Oct 2026 19:19:10 +0000
+Subject: [PATCH] fastbootd: Always return false for GetDeviceLockStatus()
 
 fenrir lks can still flash stuff through bootloader and fastboot
+
+Rebased onto lineage-24.0, where GetDeviceLockStatus() compares
+against "orange" instead of "green".
+Original: Nothing-2A/android_system_core@0d5990a
 
 Change-Id: Ica59dab533555af1d12c62b9cc71de55d5b51146
 ---
@@ -11,18 +15,18 @@ Change-Id: Ica59dab533555af1d12c62b9cc71de55d5b51146
  1 file changed, 1 insertion(+), 1 deletion(-)
 
 diff --git a/fastboot/device/utility.cpp b/fastboot/device/utility.cpp
-index d374305..0652d93 100644
+index e12ee64..0652d93 100644
 --- a/fastboot/device/utility.cpp
 +++ b/fastboot/device/utility.cpp
 @@ -195,7 +195,7 @@ std::vector<std::string> ListPartitions(FastbootDevice* device) {
  }
  
  bool GetDeviceLockStatus() {
--    return android::base::GetProperty("ro.boot.verifiedbootstate", "") == "green";
+-    return android::base::GetProperty("ro.boot.verifiedbootstate", "") != "orange";
 +    return false;
  }
  
  bool UpdateAllPartitionMetadata(FastbootDevice* device, const std::string& super_name,
 -- 
-2.55.0
+2.43.0
 
