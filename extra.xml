@@ -8,9 +8,6 @@
   <!-- Face unlock -->
   <project path="packages/apps/FaceUnlock" remote="gitlab" name="AdarshGrewal/android_packages_apps_FaceUnlock" revision="lineage-23.0" />
 
-  <!-- Dolby -->
-  <project path="packages/apps/XiaomiDolby" remote="github" name="loonage/android_packages_apps_XiaomiDolby" revision="lineage-23.2" />
-
   <!-- google/pixel apps -->
   <project path="vendor/gapps" name="MindTheGapps/vendor_gapps" remote="github" revision="baklava"/>
   <project path="vendor/pixel/extract-utils" remote="gitlab" name="loonage/android_vendor_pixel_extract-utils" revision="lineage-23.0" />
